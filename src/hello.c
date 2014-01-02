@@ -41,3 +41,18 @@ int main()
 	return (EXIT_SUCCESS);
 }
 
+void delay(unsigned char d) {
+	d;
+
+	__asm
+		; Save used registers
+		nop
+		; Read parameters from stack
+		nop
+		; Do the work
+		nop
+		; Restore saved registers
+		nop
+	__endasm;
+}
+
