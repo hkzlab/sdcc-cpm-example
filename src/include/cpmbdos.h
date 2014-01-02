@@ -3,7 +3,12 @@
  * Copyright (C) Douglas W. Goodall
  * For Non-Commercial use by N8VEM
  * 5/10/2011 dwg - initial version
+ * hkzlab - current modified version
 */
+
+#ifndef __CPM_BDOS_INTERFACES__
+#define __CPM_BDOS_INTERFACES__
+
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1
 
@@ -47,6 +52,7 @@ struct BDOSCALL {
 };
 
 unsigned char cpmbdos(struct BDOSCALL *p);
+void cpmbdos_init_structs(void); // Perform the initialization in a function instead, avoid SDCC 3 to complain.
 
 struct FCB {
 	unsigned char drive;
@@ -69,7 +75,12 @@ struct READSTR {
         char bytes[80];
       } rsbuffer;
 
-struct BDOSCALL readstr = { C_READSTR, { (unsigned int)&rsbuffer } };
+struct BDOSCALL readstr;
+
+void cpmbdos_init_structs(void) {
+	readstr.func8 = C_READSTR;
+	readstr.parm16 = (unsigned int)&rsbuffer;
+}
 
 char * mygets(char *p)
 {
@@ -84,6 +95,5 @@ char * mygets(char *p)
 
 #define gets mygets
 
-/*****************/
-/* eof - cpm80.h */
-/*****************/
+#endif /* __CPM_BDOS_INTERFACES__ */
+

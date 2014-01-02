@@ -22,8 +22,14 @@ void outchar(char c)
 }
 #endif
 
+void sys_init(void) {
+	cpmbdos_init_structs(); // Initialize CP/M BDOS interface structures
+}
+
 int main()
 {
+	sys_init();
+
 	printf("HELLO WORLD!\n");
 
 	return (EXIT_SUCCESS);

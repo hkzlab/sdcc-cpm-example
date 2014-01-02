@@ -1,8 +1,8 @@
-COMPILER_PREFIX = /opt/local/libexec/sdcc29/
+COMPILER_PREFIX = /opt/local/
 COMPILER_LIBS = $(COMPILER_PREFIX)/share/sdcc/lib/z80/
 CCC = $(COMPILER_PREFIX)/bin/sdcc
-CAS = $(COMPILER_PREFIX)/bin/as-z80
-CLD = $(COMPILER_PREFIX)/bin/link-z80
+CAS = $(COMPILER_PREFIX)/bin/sdasz80
+CLD = $(COMPILER_PREFIX)/bin/sdldz80
 
 CC = gcc
 
@@ -35,7 +35,8 @@ $(BIN_DIR)/hello.ihx:	$(BIN_DIR)/hello.rel $(BIN_DIR)/hello.arf $(BIN_DIR)/cpm0.
 	$(CLD) $(CLD_FLAGS) -nf $(BIN_DIR)/hello.arf
 	$(MOVE) hello.ihx $(BIN_DIR)
 	$(MOVE) hello.map $(BIN_DIR)
-	$(MOVE) hello.sym $(BIN_DIR)
+#	$(MOVE) hello.sym $(BIN_DIR)
+	$(MOVE) hello.noi $(BIN_DIR)
 
 $(BIN_DIR)/hello.rel: $(SRC_DIR)/hello.c
 	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SRC_DIR)/hello.c
