@@ -23,34 +23,35 @@ CCC_FLAGS = -c -mz80 -D__SDCC__=1 -I $(INCLUDE_DIR)
 CAS_FLAGS = -plosff 
 CLD_FLAGS = 
 
-all: $(BIN_DIR)/hello.com
+TARGET = hello
 
-$(BIN_DIR)/hello.com:	$(LBIN_DIR)/load $(BIN_DIR)/hello.hex	
-	$(LBIN_DIR)/load	$(BIN_DIR)/hello
+all: $(BIN_DIR)/$(TARGET).com
 
-$(BIN_DIR)/hello.hex:	$(BIN_DIR)/hello.ihx
-	$(COPY)	$(BIN_DIR)/hello.ihx $(BIN_DIR)/hello.hex
+$(BIN_DIR)/$(TARGET).com:	$(LBIN_DIR)/load $(BIN_DIR)/$(TARGET).hex	
+	$(LBIN_DIR)/load	$(BIN_DIR)/$(TARGET)
 
-$(BIN_DIR)/hello.ihx:	$(BIN_DIR)/hello.rel $(BIN_DIR)/hello.arf $(BIN_DIR)/cpm0.rel $(BIN_DIR)/cpmbdos.rel $(BIN_DIR)/cprintf.rel
-	$(CLD) $(CLD_FLAGS) -nf $(BIN_DIR)/hello.arf
-	$(MOVE) hello.ihx $(BIN_DIR)
-	$(MOVE) hello.map $(BIN_DIR)
-#	$(MOVE) hello.sym $(BIN_DIR)
-	$(MOVE) hello.noi $(BIN_DIR)
+$(BIN_DIR)/$(TARGET).hex:	$(BIN_DIR)/$(TARGET).ihx
+	$(COPY)	$(BIN_DIR)/$(TARGET).ihx $(BIN_DIR)/$(TARGET).hex
 
-$(BIN_DIR)/hello.rel: $(SRC_DIR)/hello.c
-	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SRC_DIR)/hello.c
+$(BIN_DIR)/$(TARGET).ihx:	$(BIN_DIR)/$(TARGET).rel $(BIN_DIR)/$(TARGET).arf $(BIN_DIR)/cpm0.rel $(BIN_DIR)/cpmbdos.rel $(BIN_DIR)/cprintf.rel
+	$(CLD) $(CLD_FLAGS) -nf $(BIN_DIR)/$(TARGET).arf
+	$(MOVE) $(TARGET).ihx $(BIN_DIR)
+	$(MOVE) $(TARGET).map $(BIN_DIR)
+	$(MOVE) $(TARGET).noi $(BIN_DIR)
 
-$(BIN_DIR)/hello.arf:	
-	$(ECHO) -mjx > $(BIN_DIR)/hello.arf
-	$(ECHO) -i hello.ihx >> $(BIN_DIR)/hello.arf
-	$(ECHO) -k $(COMPILER_LIBS) >> $(BIN_DIR)/hello.arf
-	$(ECHO) -l z80 >> $(BIN_DIR)/hello.arf
-	$(ECHO) $(BIN_DIR)/cpm0.rel >> $(BIN_DIR)/hello.arf
-	$(ECHO) $(BIN_DIR)/hello.rel >> $(BIN_DIR)/hello.arf
-	$(ECHO) $(BIN_DIR)/cpmbdos.rel >> $(BIN_DIR)/hello.arf
-	$(ECHO) $(BIN_DIR)/cprintf.rel >> $(BIN_DIR)/hello.arf
-	$(ECHO) -e >> $(BIN_DIR)/hello.arf
+$(BIN_DIR)/$(TARGET).rel: $(SRC_DIR)/$(TARGET).c
+	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SRC_DIR)/$(TARGET).c
+
+$(BIN_DIR)/$(TARGET).arf:	
+	$(ECHO) -mjx > $(BIN_DIR)/$(TARGET).arf
+	$(ECHO) -i $(TARGET).ihx >> $(BIN_DIR)/$(TARGET).arf
+	$(ECHO) -k $(COMPILER_LIBS) >> $(BIN_DIR)/$(TARGET).arf
+	$(ECHO) -l z80 >> $(BIN_DIR)/$(TARGET).arf
+	$(ECHO) $(BIN_DIR)/cpm0.rel >> $(BIN_DIR)/$(TARGET).arf
+	$(ECHO) $(BIN_DIR)/$(TARGET).rel >> $(BIN_DIR)/$(TARGET).arf
+	$(ECHO) $(BIN_DIR)/cpmbdos.rel >> $(BIN_DIR)/$(TARGET).arf
+	$(ECHO) $(BIN_DIR)/cprintf.rel >> $(BIN_DIR)/$(TARGET).arf
+	$(ECHO) -e >> $(BIN_DIR)/$(TARGET).arf
 
 $(BIN_DIR)/cprintf.rel: $(SRC_DIR)/cprintf.c
 	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SRC_DIR)/cprintf.c

@@ -28,9 +28,15 @@ void sys_init(void) {
 
 int main()
 {
+	int idx;
+
 	sys_init();
 
 	printf("HELLO WORLD!\n");
+
+	for (idx = 0; idx < 100; idx++) {
+		printf("%d\n", idx);
+	}
 
 	return (EXIT_SUCCESS);
 }
