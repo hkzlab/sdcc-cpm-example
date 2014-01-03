@@ -1,6 +1,6 @@
 /* cprintf.h */
 
-int cprintf(const char * fmt, ...);
+int cprintf(const char *fmt, ...);
 
 #define printf cprintf
 

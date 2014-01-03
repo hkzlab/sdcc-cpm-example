@@ -70,10 +70,10 @@ struct FCB {
 };
 
 struct READSTR {
-        unsigned char size;
-        unsigned char len;
-        char bytes[80];
-      } rsbuffer;
+	unsigned char size;
+	unsigned char len;
+	char bytes[80];
+} rsbuffer;
 
 struct BDOSCALL readstr;
 
@@ -82,15 +82,14 @@ void cpmbdos_init_structs(void) {
 	readstr.parm16 = (unsigned int)&rsbuffer;
 }
 
-char * mygets(char *p)
-{
-        memset(rsbuffer.bytes,0,sizeof(rsbuffer.bytes));
-        rsbuffer.size = sizeof(rsbuffer.bytes); 
-        rsbuffer.len = 0;
-        cpmbdos(&readstr);
-        rsbuffer.bytes[rsbuffer.len] = '\n';
-        strcpy(p,rsbuffer.bytes);
-        return p;
+char *mygets(char *p) {
+	memset(rsbuffer.bytes, 0, sizeof(rsbuffer.bytes));
+	rsbuffer.size = sizeof(rsbuffer.bytes);
+	rsbuffer.len = 0;
+	cpmbdos(&readstr);
+	rsbuffer.bytes[rsbuffer.len] = '\n';
+	strcpy(p, rsbuffer.bytes);
+	return p;
 }
 
 #define gets mygets
