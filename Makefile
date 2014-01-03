@@ -39,6 +39,7 @@ TARGET = hello
 all: $(BIN_DIR)/$(TARGET).com
 
 $(BIN_DIR)/$(TARGET).com:	$(LBIN_DIR)/load $(BIN_DIR)/$(TARGET).hex	
+	$(QUIET)$(ECHO) Generating $(TARGET).com
 	$(LBIN_DIR)/load	$(BIN_DIR)/$(TARGET)
 
 $(BIN_DIR)/$(TARGET).hex:	$(BIN_DIR)/$(TARGET).ihx
