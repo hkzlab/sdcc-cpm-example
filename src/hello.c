@@ -22,14 +22,16 @@ void outchar(char c) {
 void sys_init(void) {
 }
 
+static __sfr __at 0x78 IoRAMPage; // Create a var to access I/O space
+
 int main() {
 	// Prepare a command to send the BEL character
 	struct BDOSCALL bellcall = { C_WRITE, {(unsigned int)7} };
 	int idx;
-	
+
 	sys_init();
 	
-	printf("HELLO WORLD!\n");
+	printf("HELLO WORLD!\nTest %.2X\n", IoRAMPage);
 
 	for (idx = 0; idx < 20; idx++) {
 		printf("%d\n", idx);
