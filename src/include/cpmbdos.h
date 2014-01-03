@@ -12,6 +12,7 @@
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1
 
+// BDOS calls
 #define C_READ       1
 #define C_WRITE      2
 #define A_READ       3
@@ -51,8 +52,6 @@ struct BDOSCALL {
 	unsigned int  parm16;
 };
 
-unsigned char cpmbdos(struct BDOSCALL *p);
-void cpmbdos_init_structs(void); // Perform the initialization in a function instead, avoid SDCC 3 to complain.
 
 struct FCB {
 	unsigned char drive;
@@ -75,6 +74,11 @@ struct READSTR {
 	char bytes[80];
 } rsbuffer;
 
+unsigned char cpmbdos(struct BDOSCALL *p);
+
+// Example of BDOS function call
+// readstr must be initialized first with cpmbdos_init_structs
+/*
 struct BDOSCALL readstr;
 
 void cpmbdos_init_structs(void) {
@@ -93,6 +97,7 @@ char *mygets(char *p) {
 }
 
 #define gets mygets
+*/
 
 #endif /* __CPM_BDOS_INTERFACES__ */
 

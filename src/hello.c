@@ -20,7 +20,6 @@ void outchar(char c) {
 #endif
 
 void sys_init(void) {
-	cpmbdos_init_structs(); // Initialize CP/M BDOS interface structures
 }
 
 int main() {
