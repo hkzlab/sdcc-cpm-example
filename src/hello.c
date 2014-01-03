@@ -23,14 +23,17 @@ void sys_init(void) {
 }
 
 int main() {
+	// Prepare a command to send the BEL character
+	struct BDOSCALL bellcall = { C_WRITE, {(unsigned int)7} };
 	int idx;
-
+	
 	sys_init();
-
+	
 	printf("HELLO WORLD!\n");
 
-	for (idx = 0; idx < 100; idx++) {
+	for (idx = 0; idx < 20; idx++) {
 		printf("%d\n", idx);
+		cpmbdos(&bellcall); // Make the console beep a bit!
 	}
 
 	return (EXIT_SUCCESS);
