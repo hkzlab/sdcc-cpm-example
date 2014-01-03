@@ -1711,4 +1711,3 @@ Entered with C=0D3h, DE=decimal number.
 Outputs the number as an unsigned 16-bit integer, with leading zero
 suppression.
 ===============================================================================
-Return_to_archive_listing
