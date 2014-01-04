@@ -85,6 +85,10 @@ $(BIN_DIR)/cpmbdos.rel: $(CPM_SRC_DIR)/cpmbdos.rel
 $(LBIN_DIR)/load: $(LSRC_DIR)/load.c
 	$(CC) $(LSRC_DIR)/load.c -o $(LBIN_DIR)/load
 
+allclean: toolclean clean
+
+toolclean:
+	rm $(LBIN_DIR)/*
+
 clean:
 	rm $(BIN_DIR)/*
-	rm $(LBIN_DIR)/*
