@@ -22,7 +22,10 @@ void outchar(char c) {
 void sys_init(void) {
 }
 
-static __sfr __at 0x78 IoRAMPage; // Create a var to access I/O space
+static __sfr __at 0x60 IoPPIPortA; // Create a var to access I/O space
+static __sfr __at 0x61 IoPPIPortB;
+static __sfr __at 0x62 IoPPIPortC;
+static __sfr __at 0x63 IoPPICtrl;
 
 int main() {
 	// Prepare a command to send the BEL character
@@ -31,7 +34,7 @@ int main() {
 
 	sys_init();
 	
-	printf("HELLO WORLD!\nTest %.2X\n", IoRAMPage);
+	printf("HELLO WORLD!\nTest %.2X %.2X %.2X %.2X\n", IoPPIPortA, IoPPIPortB, IoPPIPortC, IoPPICtrl);
 
 	for (idx = 0; idx < 20; idx++) {
 		printf("%d\n", idx);
