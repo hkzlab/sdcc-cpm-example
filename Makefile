@@ -34,7 +34,7 @@ CAS_FLAGS = -plosff
 CLD_FLAGS = 
 
 # Here begins the actual creation of destination files
-TARGET = hello
+TARGET = main
 
 all: $(BIN_DIR)/$(TARGET).com
 
