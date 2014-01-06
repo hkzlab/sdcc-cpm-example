@@ -48,13 +48,13 @@
 #define F_WRITEZF    40
 
 
-struct BDOSCALL {
+typedef struct {
 	unsigned char func8;
 	unsigned int  parm16;
-};
+} BDOSCALL;
 
 
-struct FCB {
+typedef struct {
 	unsigned char drive;
 	char filename[8];
 	char filetype[3];
@@ -67,13 +67,8 @@ struct FCB {
 	unsigned char r0;
 	unsigned char r1;
 	unsigned char r2;
-};
+} FCB;
 
-struct READSTR {
-	unsigned char size;
-	unsigned char len;
-	char bytes[80];
-} rsbuffer;
 
 /* 
  *  From http://www.tassos-oak.com/NB2/toolbook.html
@@ -87,11 +82,17 @@ struct READSTR {
  *  The other argument depends on the service being requested, but if it's a byte, it is passed in register E, and if a word, in DE.
  *  The second argument is the byte to be typed; it's passed in register E.
  */
-unsigned char cpmbdos(struct BDOSCALL *p);
+unsigned char cpmbdos(BDOSCALL *p);
 
 // Example of BDOS function call
 // readstr must be initialized first with cpmbdos_init_structs
 /*
+struct READSTR {
+	unsigned char size;
+	unsigned char len;
+	char bytes[80];
+} rsbuffer;
+
 struct BDOSCALL readstr;
 
 void cpmbdos_init_structs(void) {
