@@ -7,18 +7,6 @@
 #include "cprintf.h"
 #endif
 
-/* THESE ARE USED BY THE LIBRARY ROUTINES */
-#ifndef __GNUC__
-char getchar(void) {
-	BDOSCALL cread = { C_READ, { (unsigned int)0 } };
-	return cpmbdos(&cread);
-}
-void outchar(char c) {
-	BDOSCALL cwrite = { C_WRITE, { (unsigned int)c } };
-	cpmbdos(&cwrite);
-}
-#endif
-
 void sys_init(void) {
 }
 

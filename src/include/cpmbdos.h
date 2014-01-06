@@ -9,6 +9,8 @@
 #ifndef __CPM_BDOS_INTERFACES__
 #define __CPM_BDOS_INTERFACES__
 
+#include "common_datatypes.h"
+
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1
 
@@ -49,24 +51,24 @@
 
 
 typedef struct {
-	unsigned char func8;
-	unsigned int  parm16;
+	uint8_t func8;
+	uint16_t  parm16;
 } BDOSCALL;
 
 
 typedef struct {
-	unsigned char drive;
+	uint8_t drive;
 	char filename[8];
 	char filetype[3];
-	unsigned char ex;
-	unsigned char s1;
-	unsigned char s2;
-	unsigned char rc;
-	unsigned char al[16];
-	unsigned char cr;
-	unsigned char r0;
-	unsigned char r1;
-	unsigned char r2;
+	uint8_t ex;
+	uint8_t s1;
+	uint8_t s2;
+	uint8_t rc;
+	uint8_t al[16];
+	uint8_t cr;
+	uint8_t r0;
+	uint8_t r1;
+	uint8_t r2;
 } FCB;
 
 
@@ -82,36 +84,7 @@ typedef struct {
  *  The other argument depends on the service being requested, but if it's a byte, it is passed in register E, and if a word, in DE.
  *  The second argument is the byte to be typed; it's passed in register E.
  */
-unsigned char cpmbdos(BDOSCALL *p);
-
-// Example of BDOS function call
-// readstr must be initialized first with cpmbdos_init_structs
-/*
-struct READSTR {
-	unsigned char size;
-	unsigned char len;
-	char bytes[80];
-} rsbuffer;
-
-struct BDOSCALL readstr;
-
-void cpmbdos_init_structs(void) {
-	readstr.func8 = C_READSTR;
-	readstr.parm16 = (unsigned int)&rsbuffer;
-}
-
-char *mygets(char *p) {
-	memset(rsbuffer.bytes, 0, sizeof(rsbuffer.bytes));
-	rsbuffer.size = sizeof(rsbuffer.bytes);
-	rsbuffer.len = 0;
-	cpmbdos(&readstr);
-	rsbuffer.bytes[rsbuffer.len] = '\n';
-	strcpy(p, rsbuffer.bytes);
-	return p;
-}
-
-#define gets mygets
-*/
+uint8_t cpmbdos(BDOSCALL *p);
 
 #endif /* __CPM_BDOS_INTERFACES__ */
 
