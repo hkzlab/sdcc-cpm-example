@@ -21,6 +21,7 @@ MOVE = mv
 # Project directories
 SRC_DIR = src/
 CPM_SRC_DIR = $(SRC_DIR)/cpm
+SYSLIB_SRC_DIR = $(SRC_DIR)/syslib
 BIN_DIR = bin/
 
 LSRC_DIR = lsrc/
@@ -68,11 +69,11 @@ $(BIN_DIR)/$(TARGET).arf:
 	$(QUIET)$(ECHO) $(BIN_DIR)/cbm_sysfunc.rel >> $(BIN_DIR)/$(TARGET).arf
 	$(QUIET)$(ECHO) -e >> $(BIN_DIR)/$(TARGET).arf
 
-$(BIN_DIR)/cprintf.rel: $(SRC_DIR)/cprintf.c
-	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SRC_DIR)/cprintf.c
+$(BIN_DIR)/cprintf.rel: $(SYSLIB_SRC_DIR)/cprintf.c
+	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SYSLIB_SRC_DIR)/cprintf.c
 
-$(BIN_DIR)/cbm_sysfunc.rel: $(SRC_DIR)/cbm_sysfunc.c
-	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SRC_DIR)/cbm_sysfunc.c
+$(BIN_DIR)/cbm_sysfunc.rel: $(SYSLIB_SRC_DIR)/cbm_sysfunc.c
+	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SYSLIB_SRC_DIR)/cbm_sysfunc.c
 
 # Build CP/M-80 Command File Structure files
 $(BIN_DIR)/cpm0.rel: $(CPM_SRC_DIR)/cpm0.rel

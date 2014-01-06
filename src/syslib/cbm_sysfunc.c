@@ -1,7 +1,7 @@
 #include "cbm_sysfunc.h"
 
-#include "include/common_datatypes.h"
-#include "include/cpmbdos.h"
+#include "common_datatypes.h"
+#include "cpmbdos.h"
 
 #include <stdlib.h>
 #include <string.h>

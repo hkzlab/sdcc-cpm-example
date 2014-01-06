@@ -4,7 +4,7 @@
 
 #include "cpmbdos.h"
 #include "cprintf.h"
-#include "cbm_sysfunc.h"
+#include "syslib/cbm_sysfunc.h"
 
 void sys_init(void) {
 }
