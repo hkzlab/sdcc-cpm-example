@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef __GNUC__
 #include "cpmbdos.h"
 #include "cprintf.h"
-#endif
+#include "cbm_sysfunc.h"
 
 void sys_init(void) {
 }
@@ -27,6 +26,14 @@ int main() {
 		printf("%d\n", idx);
 		cpmbdos(&bellcall); // Make the console beep a bit!
 	}
+
+	cbm_putchar(0x1B);
+	cbm_putchar('<');
+
+	cbm_putchar(0x1B);
+	cbm_putchar('[');
+	cbm_putchar('2');
+	cbm_putchar('J');
 
 	return (EXIT_SUCCESS);
 }

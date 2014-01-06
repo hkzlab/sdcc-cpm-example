@@ -14,14 +14,15 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
+#include "cbm_sysfunc.h"
+
 #undef printf
 #define ASM_CVT 0
 #ifndef strlen
 int strlen(char *s);
 #endif
 
-void outchar(char ch);
-#define putch(ch) outchar((char)ch)
+#define putch(ch) cbm_putchar((char)ch)
 
 
 #ifndef NULL

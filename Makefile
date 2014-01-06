@@ -46,7 +46,7 @@ $(BIN_DIR)/$(TARGET).hex:	$(BIN_DIR)/$(TARGET).ihx
 	$(QUIET)$(ECHO) Generating $(TARGET).ihx
 	$(QUIET)$(COPY)	$(BIN_DIR)/$(TARGET).ihx $(BIN_DIR)/$(TARGET).hex
 
-$(BIN_DIR)/$(TARGET).ihx:	$(BIN_DIR)/$(TARGET).rel $(BIN_DIR)/$(TARGET).arf $(BIN_DIR)/cpm0.rel $(BIN_DIR)/cpmbdos.rel $(BIN_DIR)/cprintf.rel $(BIN_DIR)/sysfunc.rel
+$(BIN_DIR)/$(TARGET).ihx:	$(BIN_DIR)/$(TARGET).rel $(BIN_DIR)/$(TARGET).arf $(BIN_DIR)/cpm0.rel $(BIN_DIR)/cpmbdos.rel $(BIN_DIR)/cprintf.rel $(BIN_DIR)/cbm_sysfunc.rel
 	$(CLD) $(CLD_FLAGS) -nf $(BIN_DIR)/$(TARGET).arf
 	$(QUIET)$(MOVE) $(TARGET).ihx $(BIN_DIR)
 	$(QUIET)$(MOVE) $(TARGET).map $(BIN_DIR)
@@ -65,14 +65,14 @@ $(BIN_DIR)/$(TARGET).arf:
 	$(QUIET)$(ECHO) $(BIN_DIR)/$(TARGET).rel >> $(BIN_DIR)/$(TARGET).arf
 	$(QUIET)$(ECHO) $(BIN_DIR)/cpmbdos.rel >> $(BIN_DIR)/$(TARGET).arf
 	$(QUIET)$(ECHO) $(BIN_DIR)/cprintf.rel >> $(BIN_DIR)/$(TARGET).arf
-	$(QUIET)$(ECHO) $(BIN_DIR)/sysfunc.rel >> $(BIN_DIR)/$(TARGET).arf
+	$(QUIET)$(ECHO) $(BIN_DIR)/cbm_sysfunc.rel >> $(BIN_DIR)/$(TARGET).arf
 	$(QUIET)$(ECHO) -e >> $(BIN_DIR)/$(TARGET).arf
 
 $(BIN_DIR)/cprintf.rel: $(SRC_DIR)/cprintf.c
 	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SRC_DIR)/cprintf.c
 
-$(BIN_DIR)/sysfunc.rel: $(SRC_DIR)/sysfunc.c
-	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SRC_DIR)/sysfunc.c
+$(BIN_DIR)/cbm_sysfunc.rel: $(SRC_DIR)/cbm_sysfunc.c
+	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SRC_DIR)/cbm_sysfunc.c
 
 # Build CP/M-80 Command File Structure files
 $(BIN_DIR)/cpm0.rel: $(CPM_SRC_DIR)/cpm0.rel

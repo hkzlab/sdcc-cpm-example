@@ -1,4 +1,4 @@
-#include "sysfunc.h"
+#include "cbm_sysfunc.h"
 
 #include "include/common_datatypes.h"
 #include "include/cpmbdos.h"
@@ -14,9 +14,6 @@ typedef struct {
 
 static BDOSCALL bdos_readstr;
 static RS_BUFFER rs_buf;
-
-char getchar(void);
-void outchar(char c);
 
 void cpm_sysfunc_init(void) {
 	// Initialize READSTR BDOS call
@@ -38,14 +35,12 @@ char *cpm_gets(char *p) {
 	return p;
 }
 
-/* THESE ARE USED BY THE LIBRARY ROUTINES */
-#ifndef __GNUC__
-char getchar(void) {
+char cbm_getchar(void) {
 	BDOSCALL cread = { C_READ, { (unsigned int)0 } };
 	return cpmbdos(&cread);
 }
-void outchar(char c) {
+
+void cbm_putchar(char c) {
 	BDOSCALL cwrite = { C_WRITE, { (unsigned int)c } };
 	cpmbdos(&cwrite);
 }
-#endif
