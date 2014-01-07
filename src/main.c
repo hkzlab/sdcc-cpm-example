@@ -5,6 +5,7 @@
 #include "cpmbdos.h"
 #include "cprintf.h"
 #include "syslib/cbm_sysfunc.h"
+#include "syslib/ansi_term.h"
 
 void sys_init(void) {
 }
@@ -17,6 +18,8 @@ int main() {
 	// Prepare a command to send the BEL character
 	BDOSCALL bellcall = { C_WRITE, {(unsigned int)7} };
 	int idx;
+	uint8_t x, y;
+	EraseDir eDir = erase_all;
 
 	sys_init();
 	
@@ -27,13 +30,16 @@ int main() {
 		cpmbdos(&bellcall); // Make the console beep a bit!
 	}
 
-	cbm_putchar(0x1B);
-	cbm_putchar('<');
+	term_ANSIMode();
+	term_ANSIClrScrn(eDir);
 
-	cbm_putchar(0x1B);
-	cbm_putchar('[');
-	cbm_putchar('2');
-	cbm_putchar('J');
+	for (x = 0; x < 80; x++) {
+		for (y = 0; y < 24; y++) {
+			term_ANSIDirectCursorAddr(x, y);
+			cbm_putchar('X');
+		}
+	}
+	
 
 	return (EXIT_SUCCESS);
 }
