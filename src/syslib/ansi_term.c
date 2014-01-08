@@ -8,6 +8,7 @@
 #define ANSI_CLRSCRN	"[_J"	// Erase screen
 #define ANSI_CLRLINE	"[_K"	// Erase line
 #define ANSI_CURDIRADR	"[___;___H"	// Direct address of cursor position Y X
+#define ANSI_CURMOVE	"[___X" // Move cursor up/down/left/right X spots
 
 void term_sendCommand(char *cmd);
 
@@ -32,6 +33,33 @@ void term_ANSIDirectCursorAddr(uint8_t column, uint8_t line) {
 	cmd[3] = line + 0x30;
 
 	term_sendCommand(cmd);
+}
+
+void term_ANSICursorMove(uint8_t spaces, ModeDir dir) {
+	char cmd[] = ANSI_CURMOVE;
+
+	switch (dir) {
+		case move_up:
+			cmd[4] = 'A';
+			break;
+		case move_down:
+			cmd[4] = 'B';
+			break;
+		case move_right:
+			cmd[4] = 'C';
+			break;
+		case move_left:
+		default:
+			cmd[4] = 'D';
+			break;
+	}
+
+	// Convert the spaces value into ASCII
+	cmd[1] = (spaces / 100) + 0x30;
+	spaces -= (100 * (spaces / 100));
+	cmd[2] = (spaces / 10) + 0x30;
+	spaces -= (10 * (spaces / 10));
+	cmd[3] = spaces + 0x30;
 }
 
 void term_ANSIClrLine(EraseDir dir) {
@@ -70,9 +98,37 @@ void term_ANSIClrScrn(EraseDir dir) {
 	term_sendCommand(cmd);
 }
 
-void term_ANSISetParam(uint8_t param) {
+void term_ANSISetParam(uint8_t prm) {
 	char cmd[] = "[_;_;_;_;_m";
+	int idx = 1;
 
+	if (prm & 0x01) {
+		cmd[idx] = 0;
+	}
+
+	if (prm & 0x02) {
+		idx += 2;
+		cmd[idx] = 1;
+	}
+
+	if (prm & 0x04) {
+		idx += 2;
+		cmd[idx] = 4;
+	}
+
+	if (prm & 0x08) {
+		idx += 2;
+		cmd[idx] = 5;
+	}
+
+	if (prm & 0x0F) {
+		idx += 2;
+		cmd[idx] = 7;
+	}
+
+	cmd[idx + 1] = 'm';
+	cmd[idx + 2] = '\0';
+	
 	term_sendCommand(cmd);
 }
 
