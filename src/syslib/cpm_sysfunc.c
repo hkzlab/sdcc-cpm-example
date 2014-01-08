@@ -1,4 +1,4 @@
-#include "cbm_sysfunc.h"
+#include "cpm_sysfunc.h"
 
 #include "common_datatypes.h"
 #include "cpmbdos.h"
@@ -35,12 +35,12 @@ char *cpm_gets(char *p) {
 	return p;
 }
 
-char cbm_getchar(void) {
+char cpm_getchar(void) {
 	BDOSCALL cread = { C_READ, { (unsigned int)0 } };
 	return cpmbdos(&cread);
 }
 
-void cbm_putchar(char c) {
+void cpm_putchar(char c) {
 	BDOSCALL cwrite = { C_WRITE, { (unsigned int)c } };
 	cpmbdos(&cwrite);
 }

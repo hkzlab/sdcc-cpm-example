@@ -4,7 +4,7 @@
 
 #include "cpmbdos.h"
 #include "cprintf.h"
-#include "syslib/cbm_sysfunc.h"
+#include "syslib/cpm_sysfunc.h"
 #include "syslib/ansi_term.h"
 
 void sys_init(void) {
@@ -36,7 +36,7 @@ int main() {
 	for (x = 0; x < 80; x++) {
 		for (y = 0; y < 24; y++) {
 			term_ANSIDirectCursorAddr(x, y);
-			cbm_putchar('X');
+			cpm_putchar('X');
 		}
 	}
 	

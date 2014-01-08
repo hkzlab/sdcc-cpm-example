@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-#include "cbm_sysfunc.h"
+#include "cpm_sysfunc.h"
 
 #undef printf
 #define ASM_CVT 0
@@ -22,7 +22,7 @@
 int strlen(char *s);
 #endif
 
-#define putch(ch) cbm_putchar((char)ch)
+#define putch(ch) cpm_putchar((char)ch)
 
 
 #ifndef NULL

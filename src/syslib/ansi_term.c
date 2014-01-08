@@ -1,6 +1,6 @@
 #include "ansi_term.h"
 
-#include "cbm_sysfunc.h"
+#include "cpm_sysfunc.h"
 
 #define ESC_CHR 0x1B
 #define VT100_ANSI_CMD "<" // Sets VT100 and compatibles to ANSI mode 
@@ -18,6 +18,7 @@ void term_ANSIMode(void) {
 void term_ANSIDirectCursorAddr(uint8_t column, uint8_t line) {
 	char cmd[] = ANSI_CURDIRADR;
 
+	// Generate the proper ascii numbers for the command
 	cmd[5] = (column / 100) + 0x30;
 	column -= (100 * (column / 100));
 	cmd[6] = (column / 10) + 0x30;
@@ -69,12 +70,18 @@ void term_ANSIClrScrn(EraseDir dir) {
 	term_sendCommand(cmd);
 }
 
+void term_ANSISetParam(uint8_t param) {
+	char cmd[] = "[_;_;_;_;_m";
+
+	term_sendCommand(cmd);
+}
+
 void term_sendCommand(char *cmd) {
 	int idx = 0;
 
-	cbm_putchar(ESC_CHR);
+	cpm_putchar(ESC_CHR);
 	while (cmd[idx] != '\0') {
-		cbm_putchar(cmd[idx]);
+		cpm_putchar(cmd[idx]);
 		idx++;
 	}
 }
