@@ -102,32 +102,33 @@ void term_ANSISetParam(uint8_t prm) {
 	char cmd[] = "[_;_;_;_;_m";
 	int idx = 1;
 
-	if (prm & 0x01) {
-		cmd[idx] = 0;
-	}
-
-	if (prm & 0x02) {
+	if (ANSI_P_CHK_AOFF(prm)) {
+		cmd[idx] = '0';
 		idx += 2;
-		cmd[idx] = 1;
 	}
 
-	if (prm & 0x04) {
+	if (ANSI_P_CHK_BOLD(prm)) {
+		cmd[idx] = '1';
 		idx += 2;
-		cmd[idx] = 4;
 	}
 
-	if (prm & 0x08) {
+	if (ANSI_P_CHK_UNDR(prm)) {
+		cmd[idx] = '4';
 		idx += 2;
-		cmd[idx] = 5;
 	}
 
-	if (prm & 0x0F) {
+	if (ANSI_P_CHK_BLNK(prm)) {
+		cmd[idx] = '5';
 		idx += 2;
-		cmd[idx] = 7;
 	}
 
-	cmd[idx + 1] = 'm';
-	cmd[idx + 2] = '\0';
+	if (ANSI_P_CHK_REVR(prm)) {
+		cmd[idx] = '7';
+		idx += 2;
+	}
+
+	cmd[idx - 1] = 'm';
+	cmd[idx] = '\0';
 	
 	term_sendCommand(cmd);
 }

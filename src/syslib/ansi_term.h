@@ -3,6 +3,18 @@
 
 #include "common_datatypes.h"
 
+#define ANSI_P_SET_AOFF(a) (a | 0x01)
+#define ANSI_P_SET_BOLD(a) (a | 0x02)
+#define ANSI_P_SET_UNDR(a) (a | 0x04)
+#define ANSI_P_SET_BLNK(a) (a | 0x08)
+#define ANSI_P_SET_REVR(a) (a | 0x10)
+
+#define ANSI_P_CHK_AOFF(a) (a & 0x01)
+#define ANSI_P_CHK_BOLD(a) (a & 0x02)
+#define ANSI_P_CHK_UNDR(a) (a & 0x04)
+#define ANSI_P_CHK_BLNK(a) (a & 0x08)
+#define ANSI_P_CHK_REVR(a) (a & 0x10)
+
 typedef enum {
 	erase_before = 0,
 	erase_after = 1,

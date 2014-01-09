@@ -18,7 +18,7 @@ int main() {
 	// Prepare a command to send the BEL character
 	BDOSCALL bellcall = { C_WRITE, {(unsigned int)7} };
 	int idx;
-	uint8_t x, y;
+	uint8_t x, y, ansi_param = 0;
 	EraseDir eDir = erase_all;
 
 	sys_init();
@@ -40,7 +40,17 @@ int main() {
 		}
 	}
 	
+	ansi_param = ANSI_P_SET_REVR(ansi_param);	
+	term_ANSISetParam(ansi_param);
+	term_ANSIDirectCursorAddr(0, 0);
+	for (x = 0; x < 80; x++) {
+			term_ANSIDirectCursorAddr(x, 0);
+			cpm_putchar('.');		
+	}
 
+	ansi_param = ANSI_P_SET_AOFF(ansi_param);
+	term_ANSISetParam(ansi_param);
+	
 	return (EXIT_SUCCESS);
 }
 
