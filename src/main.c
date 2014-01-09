@@ -17,6 +17,7 @@ static __sfr __at 0x63 IoPPICtrl;
 int main() {
 	// Prepare a command to send the BEL character
 	BDOSCALL bellcall = { C_WRITE, {(unsigned int)7} };
+	LineMode lm;
 	int idx;
 	uint8_t x, y, ansi_param = 0;
 	EraseDir eDir = erase_all;
@@ -48,9 +49,22 @@ int main() {
 			cpm_putchar('.');		
 	}
 
+	ansi_param = 0;
 	ansi_param = ANSI_P_SET_AOFF(ansi_param);
 	term_ANSISetParam(ansi_param);
-	
+
+	term_ANSIDirectCursorAddr(0, 0);
+	for (y = 0; y < 24; y++) {
+			term_ANSIDirectCursorAddr(0, y);
+			if (y % 2)
+				 lm = doubleh_top;
+			else
+				 lm = doubleh_bottom;
+
+			term_ANSILineMode(lm);			
+	}
+
+
 	return (EXIT_SUCCESS);
 }
 

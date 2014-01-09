@@ -9,11 +9,38 @@
 #define ANSI_CLRLINE	"[_K"	// Erase line
 #define ANSI_CURDIRADR	"[___;___H"	// Direct address of cursor position Y X
 #define ANSI_CURMOVE	"[___X" // Move cursor up/down/left/right X spots
+#define ANSI_SAVECUR	"7"	// Save cursor and attributes
+#define ANSI_RESTCUR	"8" // Restore cursor and attributes
+#define ANSI_IDX		"D" // Index
+#define ANSI_REVIDX		"M" // Reverse index
+#define ANSI_LM			"#_"
 
 void term_sendCommand(char *cmd);
 
 void term_ANSIMode(void) {
 	term_sendCommand(VT100_ANSI_CMD);
+}
+
+void term_ANSILineMode(LineMode lm) {
+	char cmd[] = ANSI_LM;
+
+	switch (lm) {
+		case doubleh_top:
+			cmd[1] = '3';
+			break;
+		case doubleh_bottom:
+			cmd[1] = '4';
+			break;
+		case singlew_singleh:
+			cmd[1] = '5';
+			break;
+		case doublew_singleh:
+		default:
+			cmd[1] = '6';
+			break;
+	}
+
+	term_sendCommand(cmd);
 }
 
 void term_ANSIDirectCursorAddr(uint8_t column, uint8_t line) {
@@ -133,6 +160,22 @@ void term_ANSISetParam(uint8_t prm) {
 	term_sendCommand(cmd);
 }
 
+void term_ANSISaveCursor(void) {
+	term_sendCommand(ANSI_SAVECUR);
+}
+
+void term_ANSIRestoreCursor(void) {
+	term_sendCommand(ANSI_RESTCUR);
+}
+
+void term_ANSIIndex(void) {
+	term_sendCommand(ANSI_IDX);
+}
+
+void term_ANSIReverseIndex(void) {
+	term_sendCommand(ANSI_REVIDX);	
+}
+
 void term_sendCommand(char *cmd) {
 	int idx = 0;
 
@@ -142,3 +185,5 @@ void term_sendCommand(char *cmd) {
 		idx++;
 	}
 }
+
+

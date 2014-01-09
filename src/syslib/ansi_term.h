@@ -28,12 +28,25 @@ typedef enum {
 	move_right = 3
 } ModeDir;
 
+typedef enum {
+	doubleh_top = 0,
+	doubleh_bottom = 1,
+	singlew_singleh = 2,
+	doublew_singleh = 3
+} LineMode;
+
 void term_ANSIMode(void); 
 
 void term_ANSIClrScrn(EraseDir dir);
 void term_ANSIClrLine(EraseDir dir);
 void term_ANSIDirectCursorAddr(uint8_t column, uint8_t line);
 void term_ANSICursorMove(uint8_t spaces, ModeDir dir);
+void term_ANSISaveCursor(void);
+void term_ANSIRestoreCursor(void);
+void term_ANSIIndex(void);
+void term_ANSIReverseIndex(void);
+void term_ANSILineMode(LineMode lm);
+
 
 // prm format:
 // BIT 0 -> all off
