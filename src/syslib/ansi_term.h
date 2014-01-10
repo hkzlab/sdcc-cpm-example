@@ -55,6 +55,4 @@ void term_ANSILineMode(LineMode lm);
 // BIT 4 -> reverse on
 void term_ANSISetParam(uint8_t prm);
 
-char* term_ANSIStatusReport(void);
-
 #endif /* _ANSI_TERM_HEADER_ */

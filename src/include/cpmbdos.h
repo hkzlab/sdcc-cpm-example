@@ -56,22 +56,6 @@ typedef struct {
 } BDOSCALL;
 
 
-typedef struct {
-	uint8_t drive;
-	char filename[8];
-	char filetype[3];
-	uint8_t ex;
-	uint8_t s1;
-	uint8_t s2;
-	uint8_t rc;
-	uint8_t al[16];
-	uint8_t cr;
-	uint8_t r0;
-	uint8_t r1;
-	uint8_t r2;
-} FCB;
-
-
 /* 
  *  From http://www.tassos-oak.com/NB2/toolbook.html
  *  The BDOS is located at some address in high storage; that is, it begins at an address higher than the end of our program.

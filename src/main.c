@@ -64,8 +64,6 @@ int main() {
 			term_ANSILineMode(lm);			
 	}
 
-	term_ANSIStatusReport();
-
 	return (EXIT_SUCCESS);
 }
 

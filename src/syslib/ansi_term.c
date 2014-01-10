@@ -19,21 +19,8 @@
 #define ANSI_LM			"#_"
 
 #define ANSI_TREQ		"[c" // What are you
-#define ANSI_STATREP	"[5n" // Status report
 
 void term_sendCommand(char *cmd);
-
-char* term_ANSIStatusReport(void) {
-	char cmd[] = ANSI_STATREP;
-	char tst;
-
-	term_sendCommand(cmd);
-
-	while(tst = cpm_getchar())
-		cpm_putchar(tst);
-
-	return NULL;
-}
 
 void term_ANSIMode(void) {
 	term_sendCommand(VT100_ANSI_CMD);
