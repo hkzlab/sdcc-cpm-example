@@ -44,9 +44,8 @@ void cpm_putchar(char c) {
 	cpmbdos(&cwrite);
 }
 
-uint8_t cmb_openFile(FCB *cb) {
+uint8_t cpm_openFile(FCB *cb) {
 	int idx;
-
 	BDOSCALL fopen = { F_OPEN, {(uint16_t)cb} };
 
 	cb->ex = cb->s1 = 0;
@@ -59,4 +58,28 @@ uint8_t cmb_openFile(FCB *cb) {
 		cb->filetype[idx] &= 0x7F;
 
 	return cpmbdos(&fopen);
+}
+
+uint8_t cpm_closeFile(FCB *cb) {
+	BDOSCALL fclose = { F_CLOSE, {(uint16_t)cb} };
+
+	return cpmbdos(&fclose);
+}
+
+uint8_t cpm_deleteFile(FCB *cb) {
+	BDOSCALL fdel = { F_DELETE, {(uint16_t)cb} };
+
+	return cpmbdos(&fdel);
+}
+
+void cpm_setDMAAddr(uint16_t addr) {
+	BDOSCALL fdma = { F_DMAOFF, {addr} };
+
+	cpmbdos(&fdma);
+}
+
+uint8_t cpm_getCurDrive(void) {
+	BDOSCALL drv = { DRV_GET, { 0 } };
+
+	cpmbdos(&drv);	
 }

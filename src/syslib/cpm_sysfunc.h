@@ -23,6 +23,12 @@ void cpm_sysfunc_init(void);
 char *cpm_gets(char *p);
 char cpm_getchar(void);
 void cpm_putchar(char c);
-uint8_t cmb_openFile(FCB *cb);
+
+uint8_t cpm_openFile(FCB *cb);
+uint8_t cpm_closeFile(FCB *cb);
+uint8_t cpm_deleteFile(FCB *cb);
+void cpm_setDMAAddr(uint16_t addr);
+
+uint8_t cpm_getCurDrive(void);
 
 #endif /* _CPM_SYSFUNC_HEADER_ */
