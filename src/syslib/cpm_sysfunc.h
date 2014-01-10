@@ -16,12 +16,13 @@ typedef struct {
 	uint8_t r0;
 	uint8_t r1;
 	uint8_t r2;
-} FCB;
+} FCB; /* File Control Block */
 
 void cpm_sysfunc_init(void);
 
 char *cpm_gets(char *p);
 char cpm_getchar(void);
 void cpm_putchar(char c);
+uint8_t cmb_openFile(FCB *cb);
 
 #endif /* _CPM_SYSFUNC_HEADER_ */

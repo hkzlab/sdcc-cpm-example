@@ -19,7 +19,6 @@ void cpm_sysfunc_init(void) {
 	// Initialize READSTR BDOS call
 	bdos_readstr.func8 = C_READSTR;
 	bdos_readstr.parm16 = (uint16_t)&rs_buf;
-
 }
 
 char *cpm_gets(char *p) {
@@ -36,11 +35,28 @@ char *cpm_gets(char *p) {
 }
 
 char cpm_getchar(void) {
-	BDOSCALL cread = { C_READ, { (unsigned int)0 } };
+	BDOSCALL cread = { C_READ, { (uint16_t)0 } };
 	return cpmbdos(&cread);
 }
 
 void cpm_putchar(char c) {
-	BDOSCALL cwrite = { C_WRITE, { (unsigned int)c } };
+	BDOSCALL cwrite = { C_WRITE, { (uint16_t)c } };
 	cpmbdos(&cwrite);
+}
+
+uint8_t cmb_openFile(FCB *cb) {
+	int idx;
+
+	BDOSCALL fopen = { F_OPEN, {(uint16_t)cb} };
+
+	cb->ex = cb->s1 = 0;
+	cb->s2 = cb->rc = 0;
+
+	for (idx = 0; idx < 8; idx++)
+		cb->filename[idx] &= 0x7F;
+
+	for (idx = 0; idx < 3; idx++)
+		cb->filetype[idx] &= 0x7F;
+
+	return cpmbdos(&fopen);
 }
