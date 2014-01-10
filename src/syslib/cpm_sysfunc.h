@@ -31,8 +31,12 @@ uint8_t cpm_makeFile(FCB *cb);
 uint8_t cpm_deleteFile(FCB *cb);
 uint8_t cpm_setFileAttribs(FCB *cb);
 
-uint8_t cpm_readRecord(FCB *cb);
-uint8_t cpm_writeRecord(FCB *cb);
+uint8_t cpm_readSeqRecord(FCB *cb);
+uint8_t cpm_writeSeqRecord(FCB *cb);
+uint8_t cpm_readRandRecord(FCB *cb);
+uint8_t cpm_writeRandRecord(FCB *cb);
+void cpm_updateRandRecPtr(FCB *cb);
+uint8_t cpm_computeFileSize(FCB *cb);
 
 void cpm_setDMAAddr(uint16_t addr);
 

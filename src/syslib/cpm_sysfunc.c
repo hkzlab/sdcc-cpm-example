@@ -108,14 +108,38 @@ uint8_t cpm_setCurDrive(uint8_t drive) {
 	return cpmbdos(&drv);
 }
 
-uint8_t cpm_readRecord(FCB *cb) {
+uint8_t cpm_readSeqRecord(FCB *cb) {
 	BDOSCALL fread = { F_READ, {(uint16_t)cb} };
 
 	return cpmbdos(&fread);
 }
 
-uint8_t cpm_writeRecord(FCB *cb) {
+uint8_t cpm_writeSeqRecord(FCB *cb) {
 	BDOSCALL fwrite = { F_WRITE, {(uint16_t)cb} };
 
 	return cpmbdos(&fwrite);
+}
+
+uint8_t cpm_readRandRecord(FCB *cb) {
+	BDOSCALL fread = { F_READRAND, {(uint16_t)cb} };
+
+	return cpmbdos(&fread);
+}
+
+uint8_t cpm_writeRandRecord(FCB *cb) {
+	BDOSCALL fread = { F_WRITERAND, {(uint16_t)cb} };
+
+	return cpmbdos(&fread);
+}
+
+uint8_t cpm_computeFileSize(FCB *cb) {
+	BDOSCALL fsize = { F_SIZE, {(uint16_t)cb} };
+
+	return cpmbdos(&fsize);	
+}
+
+void cpm_updateRandRecPtr(FCB *cb) {
+	BDOSCALL frandrec = { F_RANDREC, {(uint16_t)cb} };
+
+	cpmbdos(&frandrec);	
 }
