@@ -26,9 +26,18 @@ void cpm_putchar(char c);
 
 uint8_t cpm_openFile(FCB *cb);
 uint8_t cpm_closeFile(FCB *cb);
+
+uint8_t cpm_makeFile(FCB *cb);
 uint8_t cpm_deleteFile(FCB *cb);
+uint8_t cpm_setFileAttribs(FCB *cb);
+
+uint8_t cpm_readRecord(FCB *cb);
+uint8_t cpm_writeRecord(FCB *cb);
+
 void cpm_setDMAAddr(uint16_t addr);
 
 uint8_t cpm_getCurDrive(void);
+uint8_t cpm_setCurDrive(uint8_t drive);
+uint8_t cpm_resetDrives(void);
 
 #endif /* _CPM_SYSFUNC_HEADER_ */

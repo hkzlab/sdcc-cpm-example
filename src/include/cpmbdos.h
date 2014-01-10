@@ -26,6 +26,8 @@
 #define SETIOBYTE    8
 #define C_WRITESTR   9
 #define C_READSTR    10
+#define DRV_ALLRESET 13
+#define DRV_SET      14
 #define F_OPEN       15
 #define F_CLOSE      16
 #define F_DELETE     19

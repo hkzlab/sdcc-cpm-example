@@ -66,10 +66,22 @@ uint8_t cpm_closeFile(FCB *cb) {
 	return cpmbdos(&fclose);
 }
 
+uint8_t cpm_makeFile(FCB *cb) {
+	BDOSCALL fmake = { F_MAKE, {(uint16_t)cb} };
+	
+	return cpmbdos(&fmake);
+}
+
 uint8_t cpm_deleteFile(FCB *cb) {
 	BDOSCALL fdel = { F_DELETE, {(uint16_t)cb} };
 
 	return cpmbdos(&fdel);
+}
+
+uint8_t cpm_setFileAttribs(FCB *cb) {
+	BDOSCALL fattr = { F_ATTRIB, {(uint16_t)cb} };
+
+	return cpmbdos(&fattr);	
 }
 
 void cpm_setDMAAddr(uint16_t addr) {
@@ -81,5 +93,29 @@ void cpm_setDMAAddr(uint16_t addr) {
 uint8_t cpm_getCurDrive(void) {
 	BDOSCALL drv = { DRV_GET, { 0 } };
 
-	cpmbdos(&drv);	
+	return cpmbdos(&drv);	
+}
+
+uint8_t cpm_resetDrives(void) {
+	BDOSCALL drv = { DRV_ALLRESET, { 0 } };
+
+	return cpmbdos(&drv);	
+}
+
+uint8_t cpm_setCurDrive(uint8_t drive) {
+	BDOSCALL drv = { DRV_SET, { drive } };
+
+	return cpmbdos(&drv);
+}
+
+uint8_t cpm_readRecord(FCB *cb) {
+	BDOSCALL fread = { F_READ, {(uint16_t)cb} };
+
+	return cpmbdos(&fread);
+}
+
+uint8_t cpm_writeRecord(FCB *cb) {
+	BDOSCALL fwrite = { F_WRITE, {(uint16_t)cb} };
+
+	return cpmbdos(&fwrite);
 }
