@@ -49,4 +49,6 @@ uint8_t cpm_getCurDrive(void);
 uint8_t cpm_setCurDrive(uint8_t drive);
 uint8_t cpm_resetDrives(void);
 
+void cpm_setFCBname(char *fname, char *ftype, FCB *cb);
+
 #endif /* _CPM_SYSFUNC_HEADER_ */

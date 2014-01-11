@@ -17,18 +17,20 @@ static __sfr __at 0x63 IoPPICtrl;
 int main() {
 	// Prepare a command to send the BEL character
 	BDOSCALL bellcall = { C_WRITE, {(unsigned int)7} };
+	FCB cb;
 	int idx;
 	uint8_t x, y, ansi_param = 0;
 
 	sys_init();
 	
 	printf("HELLO WORLD!\n");
-
+/*
 	for (idx = 0; idx < 20; idx++) {
 		printf("%d\n", idx);
 		cpmbdos(&bellcall); // Make the console beep a bit!
 	}
 
+	
 	term_ANSIMode();
 	term_ANSIClrScrn(ed_erase_all);
 
@@ -52,6 +54,12 @@ int main() {
 	term_ANSISetParam(ansi_param);
 
 	term_ANSIDirectCursorAddr(0, 0);
+*/
+	memset(&cb, 0, sizeof(FCB));
+	cb.drive = 1;
+	cpm_setFCBname("test", "txt", &cb);
+	cpm_performFileOp(fop_makeFile, &cb);
+	cpm_performFileOp(fop_close, &cb);
 
 	return (EXIT_SUCCESS);
 }

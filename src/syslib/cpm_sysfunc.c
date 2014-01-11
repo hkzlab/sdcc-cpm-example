@@ -68,8 +68,38 @@ uint8_t cpm_setCurDrive(uint8_t drive) {
 	return cpmbdos(&drv);
 }
 
-uint8_t cpm_performFileOp(FileOperation fop, FCB *cb) {
+void cpm_setFCBname(char *fname, char *ftype, FCB *cb) {
 	int idx;
+	char c;
+
+	for (idx = 0; (idx < 8) && (fname[idx] != '\0'); idx++) {
+		c = fname[idx] & 0x7F;
+		if (c >= 0x61 && c <= 0x7a)
+			c -= 0x20; 
+
+		cb->filename[idx] = c;
+	}
+
+	while (idx < 8) {
+		cb->filename[idx] = ' '; // Pad the filename
+		idx++;
+	}
+	
+	for (idx = 0; (idx < 3) && (ftype[idx] != '\0'); idx++) {
+		c = ftype[idx] & 0x7F;
+		if (c >= 0x61 && c <= 0x7a)
+			c -= 0x20; 
+		
+		cb->filetype[idx] = c;
+	}
+
+	while (idx < 3) {
+		cb->filetype[idx] = ' '; // Pad the filetype
+		idx++;
+	}
+}
+
+uint8_t cpm_performFileOp(FileOperation fop, FCB *cb) {
 	BDOSCALL call = { 0, {(uint16_t)cb} };
 
 	switch (fop) {
@@ -78,13 +108,6 @@ uint8_t cpm_performFileOp(FileOperation fop, FCB *cb) {
 			
 			cb->ex = cb->s1 = 0;
 			cb->s2 = cb->rc = 0;
-
-			for (idx = 0; idx < 8; idx++)
-				cb->filename[idx] &= 0x7F;
-			
-			for (idx = 0; idx < 3; idx++)
-				cb->filetype[idx] &= 0x7F;
-
 			break;
 		case fop_close:
 			call.func8 = F_CLOSE;
