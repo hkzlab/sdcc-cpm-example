@@ -16,23 +16,23 @@
 #define ANSI_P_CHK_REVR(a) (a & 0x10)
 
 typedef enum {
-	erase_before = 0,
-	erase_after = 1,
-	erase_all = 2
+	ed_erase_before = 0,
+	ed_erase_after = 1,
+	ed_erase_all = 2
 } EraseDir;
 
 typedef enum {
-	move_up = 0,
-	move_down = 1,
-	move_left = 2,
-	move_right = 3
+	md_move_up = 0,
+	md_move_down = 1,
+	md_move_left = 2,
+	md_move_right = 3
 } ModeDir;
 
 typedef enum {
-	doubleh_top = 0,
-	doubleh_bottom = 1,
-	singlew_singleh = 2,
-	doublew_singleh = 3
+	lm_doubleh_top = 0,
+	lm_doubleh_bottom = 1,
+	lm_singlew_singleh = 2,
+	lm_doublew_singleh = 3
 } LineMode;
 
 void term_ANSIMode(void); 

@@ -44,46 +44,6 @@ void cpm_putchar(char c) {
 	cpmbdos(&cwrite);
 }
 
-uint8_t cpm_openFile(FCB *cb) {
-	int idx;
-	BDOSCALL fopen = { F_OPEN, {(uint16_t)cb} };
-
-	cb->ex = cb->s1 = 0;
-	cb->s2 = cb->rc = 0;
-
-	for (idx = 0; idx < 8; idx++)
-		cb->filename[idx] &= 0x7F;
-
-	for (idx = 0; idx < 3; idx++)
-		cb->filetype[idx] &= 0x7F;
-
-	return cpmbdos(&fopen);
-}
-
-uint8_t cpm_closeFile(FCB *cb) {
-	BDOSCALL fclose = { F_CLOSE, {(uint16_t)cb} };
-
-	return cpmbdos(&fclose);
-}
-
-uint8_t cpm_makeFile(FCB *cb) {
-	BDOSCALL fmake = { F_MAKE, {(uint16_t)cb} };
-	
-	return cpmbdos(&fmake);
-}
-
-uint8_t cpm_deleteFile(FCB *cb) {
-	BDOSCALL fdel = { F_DELETE, {(uint16_t)cb} };
-
-	return cpmbdos(&fdel);
-}
-
-uint8_t cpm_setFileAttribs(FCB *cb) {
-	BDOSCALL fattr = { F_ATTRIB, {(uint16_t)cb} };
-
-	return cpmbdos(&fattr);	
-}
-
 void cpm_setDMAAddr(uint16_t addr) {
 	BDOSCALL fdma = { F_DMAOFF, {addr} };
 
@@ -108,38 +68,56 @@ uint8_t cpm_setCurDrive(uint8_t drive) {
 	return cpmbdos(&drv);
 }
 
-uint8_t cpm_readSeqRecord(FCB *cb) {
-	BDOSCALL fread = { F_READ, {(uint16_t)cb} };
+uint8_t cpm_performFileOp(FileOperation fop, FCB *cb) {
+	int idx;
+	BDOSCALL call = { 0, {(uint16_t)cb} };
 
-	return cpmbdos(&fread);
-}
+	switch (fop) {
+		case fop_open:
+			call.func8 = F_OPEN;
+			
+			cb->ex = cb->s1 = 0;
+			cb->s2 = cb->rc = 0;
 
-uint8_t cpm_writeSeqRecord(FCB *cb) {
-	BDOSCALL fwrite = { F_WRITE, {(uint16_t)cb} };
+			for (idx = 0; idx < 8; idx++)
+				cb->filename[idx] &= 0x7F;
+			
+			for (idx = 0; idx < 3; idx++)
+				cb->filetype[idx] &= 0x7F;
 
-	return cpmbdos(&fwrite);
-}
+			break;
+		case fop_close:
+			call.func8 = F_CLOSE;
+			break;
+		case fop_makeFile:
+			call.func8 = F_MAKE;
+			break;
+		case fop_delFile:
+			call.func8 = F_DELETE;
+			break;
+		case fop_setFileAttr:
+			call.func8 = F_ATTRIB;
+			break;
+		case fop_readSeqRecord:
+			call.func8 = F_READ;
+			break;
+		case fop_writeSeqRecord:
+			call.func8 = F_WRITE;
+			break;
+		case fop_readRandRecord:
+			call.func8 = F_READRAND;
+			break;
+		case fop_writeRandRecord:
+			call.func8 = F_WRITERAND;
+			break;
+		case fop_updRandRecPtr:
+			call.func8 = F_RANDREC;
+			break;
+		case fop_calcFileSize:
+			call.func8 = F_SIZE;
+		default:
+			break;
+	}
 
-uint8_t cpm_readRandRecord(FCB *cb) {
-	BDOSCALL fread = { F_READRAND, {(uint16_t)cb} };
-
-	return cpmbdos(&fread);
-}
-
-uint8_t cpm_writeRandRecord(FCB *cb) {
-	BDOSCALL fread = { F_WRITERAND, {(uint16_t)cb} };
-
-	return cpmbdos(&fread);
-}
-
-uint8_t cpm_computeFileSize(FCB *cb) {
-	BDOSCALL fsize = { F_SIZE, {(uint16_t)cb} };
-
-	return cpmbdos(&fsize);	
-}
-
-void cpm_updateRandRecPtr(FCB *cb) {
-	BDOSCALL frandrec = { F_RANDREC, {(uint16_t)cb} };
-
-	cpmbdos(&frandrec);	
+	return cpmbdos(&call);
 }

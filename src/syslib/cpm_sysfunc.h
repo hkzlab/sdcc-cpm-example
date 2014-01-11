@@ -18,25 +18,30 @@ typedef struct {
 	uint8_t r2;
 } FCB; /* File Control Block */
 
+typedef enum {
+	fop_open,
+	fop_close,
+	fop_makeFile,
+	fop_delFile,
+	fop_setFileAttr,
+	fop_readSeqRecord,
+	fop_writeSeqRecord,
+	fop_readRandRecord,
+	fop_writeRandRecord,
+	fop_updRandRecPtr,
+	fop_calcFileSize
+} FileOperation;
+
 void cpm_sysfunc_init(void);
 
 char *cpm_gets(char *p);
 char cpm_getchar(void);
 void cpm_putchar(char c);
 
-uint8_t cpm_openFile(FCB *cb);
-uint8_t cpm_closeFile(FCB *cb);
+uint8_t cpm_performFileOp(FileOperation fop, FCB *cb);
 
-uint8_t cpm_makeFile(FCB *cb);
 uint8_t cpm_deleteFile(FCB *cb);
 uint8_t cpm_setFileAttribs(FCB *cb);
-
-uint8_t cpm_readSeqRecord(FCB *cb);
-uint8_t cpm_writeSeqRecord(FCB *cb);
-uint8_t cpm_readRandRecord(FCB *cb);
-uint8_t cpm_writeRandRecord(FCB *cb);
-void cpm_updateRandRecPtr(FCB *cb);
-uint8_t cpm_computeFileSize(FCB *cb);
 
 void cpm_setDMAAddr(uint16_t addr);
 

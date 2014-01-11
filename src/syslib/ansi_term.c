@@ -30,16 +30,16 @@ void term_ANSILineMode(LineMode lm) {
 	char cmd[] = ANSI_LM;
 
 	switch (lm) {
-		case doubleh_top:
+		case lm_doubleh_top:
 			cmd[1] = '3';
 			break;
-		case doubleh_bottom:
+		case lm_doubleh_bottom:
 			cmd[1] = '4';
 			break;
-		case singlew_singleh:
+		case lm_singlew_singleh:
 			cmd[1] = '5';
 			break;
-		case doublew_singleh:
+		case lm_doublew_singleh:
 		default:
 			cmd[1] = '6';
 			break;
@@ -71,16 +71,16 @@ void term_ANSICursorMove(uint8_t spaces, ModeDir dir) {
 	char cmd[] = ANSI_CURMOVE;
 
 	switch (dir) {
-		case move_up:
+		case md_move_up:
 			cmd[4] = 'A';
 			break;
-		case move_down:
+		case md_move_down:
 			cmd[4] = 'B';
 			break;
-		case move_right:
+		case md_move_right:
 			cmd[4] = 'C';
 			break;
-		case move_left:
+		case md_move_left:
 		default:
 			cmd[4] = 'D';
 			break;
@@ -98,13 +98,13 @@ void term_ANSIClrLine(EraseDir dir) {
 	char cmd[] = ANSI_CLRLINE;
 
 	switch(dir) {
-		case erase_after:
+		case ed_erase_after:
 			cmd[1] = '0';
 			break;
-		case erase_before:
+		case ed_erase_before:
 			cmd[1] = '1';
 			break;
-		case erase_all:
+		case ed_erase_all:
 		default:
 			cmd[1] = '2';
 			break;		
@@ -117,11 +117,11 @@ void term_ANSIClrScrn(EraseDir dir) {
 	char cmd[] = ANSI_CLRSCRN;
 
 	switch(dir) {
-		case erase_after:
-		case erase_before:
+		case ed_erase_after:
+		case ed_erase_before:
 			cmd[1] = '0';
 			break;
-		case erase_all:
+		case ed_erase_all:
 		default:
 			cmd[1] = '2';
 			break;
