@@ -114,8 +114,8 @@ uint8_t cpm_performFileOp(FileOperation fop, FCB *cb) {
 			call.func8 = F_RANDREC;
 			break;
 		case fop_calcFileSize:
-			call.func8 = F_SIZE;
 		default:
+			call.func8 = F_SIZE;
 			break;
 	}
 
