@@ -15,6 +15,8 @@ static __sfr __at 0x63 IoPPICtrl;
 */
 
 int main() {
+	static uint8_t dma_buf[128];
+
 	// Prepare a command to send the BEL character
 	BDOSCALL bellcall = { C_WRITE, {(unsigned int)7} };
 	FCB cb;
@@ -22,7 +24,9 @@ int main() {
 	uint8_t x, y, ansi_param = 0;
 
 	sys_init();
-	
+
+	cpm_setDMAAddr((uint16_t)dma_buf);
+
 	printf("HELLO WORLD!\n");
 /*
 	for (idx = 0; idx < 20; idx++) {
@@ -55,10 +59,19 @@ int main() {
 
 	term_ANSIDirectCursorAddr(0, 0);
 */
+	
 	memset(&cb, 0, sizeof(FCB));
 	cb.drive = 1;
 	cpm_setFCBname("test", "txt", &cb);
 	cpm_performFileOp(fop_makeFile, &cb);
+	
+	for (idx = 0; idx < 3; idx++) {
+		memset(dma_buf, 0x58, 128);
+		dma_buf[126] = '\r';
+		dma_buf[127] = '\n';
+		cpm_performFileOp(fop_writeSeqRecord, &cb);
+	}
+
 	cpm_performFileOp(fop_close, &cb);
 
 	return (EXIT_SUCCESS);
