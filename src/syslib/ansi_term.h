@@ -3,6 +3,9 @@
 
 #include "common_datatypes.h"
 
+#define ASCII_SHIFTIN	0x0F
+#define ASCII_SHIFTOUT	0x0E
+
 #define ANSI_P_SET_AOFF(a) (a | 0x01)
 #define ANSI_P_SET_BOLD(a) (a | 0x02)
 #define ANSI_P_SET_UNDR(a) (a | 0x04)

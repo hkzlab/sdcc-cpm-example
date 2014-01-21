@@ -92,6 +92,8 @@ void term_ANSICursorMove(uint8_t spaces, ModeDir dir) {
 	cmd[2] = (spaces / 10) + 0x30;
 	spaces -= (10 * (spaces / 10));
 	cmd[3] = spaces + 0x30;
+
+	term_sendCommand(cmd);
 }
 
 void term_ANSIClrLine(EraseDir dir) {
