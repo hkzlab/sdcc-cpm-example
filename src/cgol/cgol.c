@@ -10,10 +10,18 @@ uint8_t *cgol_getGrid(void) {
 }
 
 void cgol_init(void) {
-	memset(gol_grids[0], 1, GRID_WIDTH * GRID_HEIGHT);
-	memset(gol_grids[1], 1, GRID_WIDTH * GRID_HEIGHT);
+	memset(gol_grids[0], 0, GRID_WIDTH * GRID_HEIGHT);
+	memset(gol_grids[1], 0, GRID_WIDTH * GRID_HEIGHT);
 
 	gol_idx = 0;
+
+	gol_grids[0][15 + (5 * GRID_WIDTH)] = 1;
+	gol_grids[0][17 + (6 * GRID_WIDTH)] = 1;
+	gol_grids[0][14 + (7 * GRID_WIDTH)] = 1;
+	gol_grids[0][15 + (7 * GRID_WIDTH)] = 1;
+	gol_grids[0][18 + (7 * GRID_WIDTH)] = 1;
+	gol_grids[0][19 + (7 * GRID_WIDTH)] = 1;
+	gol_grids[0][20 + (7 * GRID_WIDTH)] = 1;
 }
 
 void cgol_step(void) {
@@ -29,7 +37,7 @@ void cgol_step(void) {
 
 			lx = (x == 0) ? (GRID_WIDTH - 1) : (x - 1);
 			rx = (x == (GRID_WIDTH - 1)) ? 0 : (x + 1);
-			ty = (y == 0) ? (GRID_HEIGHT - 1) : (x - 1);
+			ty = (y == 0) ? (GRID_HEIGHT - 1) : (y - 1);
 			by = (y == (GRID_HEIGHT - 1)) ? 0 : (y + 1);
 
 			if (cur_grid[lx + (y * GRID_WIDTH)]) neighb++;

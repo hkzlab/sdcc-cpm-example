@@ -35,16 +35,16 @@ int main() {
 		grid = cgol_getGrid();
 
 	
-		for (x = 0; x < GRID_WIDTH; x++) {
-			for (y = 0; y < GRID_HEIGHT; y++) {
-				term_ANSIDirectCursorAddr(x + 2, y + 2);
-				
+		for (y = 0; y < GRID_HEIGHT; y++) {
+			term_ANSIDirectCursorAddr(2, y + 2);
+
+			for (x = 0; x < GRID_WIDTH; x++) {
 				if (grid[x + (y * GRID_WIDTH)]) cpm_putchar('X');
 				else cpm_putchar(' ');
 			}
 		}
 
-		printf("address %.4X\n", grid);
+		//printf("address %.4X\n", grid);
 		cgol_step();
 	}
 
