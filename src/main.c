@@ -7,6 +7,8 @@
 #include "syslib/cpm_sysfunc.h"
 #include "syslib/ansi_term.h"
 
+#include "cgol/cgol.h"
+
 void draw_box(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
 
 void sys_init(void) {
@@ -17,16 +19,36 @@ static __sfr __at 0x63 IoPPICtrl;
 */
 
 int main() {
+	int counter = 50;
+	uint8_t *grid, x, y;
+
 	printf("HELLO WORLD!\n");
 
 	term_ANSIMode();
 	term_ANSIClrScrn(ed_erase_all);
 
-	draw_box(1, 1, 79, 22);
-	draw_box(10, 4, 20, 15);
-	draw_box(40, 10, 7, 10);
-	draw_box(5, 0, 46, 16);
-//	term_ANSIClrScrn(ed_erase_all);
+	draw_box(0, 0, 72, 22);
+
+	cgol_init();
+
+	while (counter--) {
+		grid = cgol_getGrid();
+
+	
+		for (x = 0; x < GRID_WIDTH; x++) {
+			for (y = 0; y < GRID_HEIGHT; y++) {
+				term_ANSIDirectCursorAddr(x + 2, y + 2);
+				
+				if (grid[x + (y * GRID_WIDTH)]) cpm_putchar('X');
+				else cpm_putchar(' ');
+			}
+		}
+
+		printf("address %.4X\n", grid);
+		cgol_step();
+	}
+
+	term_ANSIClrScrn(ed_erase_all);
 	
 	return (EXIT_SUCCESS);
 }

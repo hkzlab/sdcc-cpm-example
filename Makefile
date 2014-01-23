@@ -48,7 +48,7 @@ $(BIN_DIR)/$(TARGET).hex:	$(BIN_DIR)/$(TARGET).ihx
 	$(QUIET)$(COPY)	$(BIN_DIR)/$(TARGET).ihx $(BIN_DIR)/$(TARGET).hex
 
 $(BIN_DIR)/$(TARGET).ihx:	$(BIN_DIR)/$(TARGET).rel $(BIN_DIR)/$(TARGET).arf $(BIN_DIR)/cpm0.rel $(BIN_DIR)/cpmbdos.rel \
-		$(BIN_DIR)/cprintf.rel $(BIN_DIR)/cpm_sysfunc.rel $(BIN_DIR)/ansi_term.rel
+		$(BIN_DIR)/cprintf.rel $(BIN_DIR)/cpm_sysfunc.rel $(BIN_DIR)/ansi_term.rel $(BIN_DIR)/cgol.rel
 	$(CLD) $(CLD_FLAGS) -nf $(BIN_DIR)/$(TARGET).arf
 	$(QUIET)$(MOVE) $(TARGET).ihx $(BIN_DIR)
 	$(QUIET)$(MOVE) $(TARGET).map $(BIN_DIR)
@@ -69,6 +69,7 @@ $(BIN_DIR)/$(TARGET).arf:
 	$(QUIET)$(ECHO) $(BIN_DIR)/cprintf.rel >> $(BIN_DIR)/$(TARGET).arf
 	$(QUIET)$(ECHO) $(BIN_DIR)/cpm_sysfunc.rel >> $(BIN_DIR)/$(TARGET).arf
 	$(QUIET)$(ECHO) $(BIN_DIR)/ansi_term.rel >> $(BIN_DIR)/$(TARGET).arf
+	$(QUIET)$(ECHO) $(BIN_DIR)/cgol.rel >> $(BIN_DIR)/$(TARGET).arf
 	$(QUIET)$(ECHO) -e >> $(BIN_DIR)/$(TARGET).arf
 
 $(BIN_DIR)/cprintf.rel: $(SYSLIB_SRC_DIR)/cprintf.c
@@ -79,6 +80,9 @@ $(BIN_DIR)/cpm_sysfunc.rel: $(SYSLIB_SRC_DIR)/cpm_sysfunc.c
 
 $(BIN_DIR)/ansi_term.rel: $(SYSLIB_SRC_DIR)/ansi_term.c
 	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SYSLIB_SRC_DIR)/ansi_term.c
+
+$(BIN_DIR)/cgol.rel: $(SRC_DIR)/cgol/cgol.c
+	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SRC_DIR)/cgol/cgol.c
 
 # Build CP/M-80 Command File Structure files
 $(BIN_DIR)/cpm0.rel: $(CPM_SRC_DIR)/cpm0.rel
