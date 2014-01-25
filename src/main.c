@@ -19,7 +19,7 @@ static __sfr __at 0x63 IoPPICtrl;
 */
 
 int main() {
-	int counter = 50;
+	int counter = 150;
 	uint8_t *grid, x, y;
 
 	printf("HELLO WORLD!\n");
