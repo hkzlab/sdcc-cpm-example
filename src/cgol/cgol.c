@@ -5,13 +5,28 @@
 static uint8_t gol_grids[2][GRID_WIDTH * GRID_HEIGHT];
 static uint8_t gol_idx;
 
+static uint8_t precalc_grids[4][GRID_WIDTH * GRID_HEIGHT];
+
 uint8_t *cgol_getGrid(void) {
 	return (gol_grids[gol_idx]);
 }
 
 void cgol_init(void) {
+	uint8_t x, y, lx, ty, rx, by;
+
+	// Clean the game grids
 	memset(gol_grids[0], 0, GRID_WIDTH * GRID_HEIGHT);
 	memset(gol_grids[1], 0, GRID_WIDTH * GRID_HEIGHT);
+
+	// Prepare the precalculated grids
+	for (x = 0; x < GRID_WIDTH; x++) {
+		for (y = 0; y < GRID_HEIGHT; y++) {
+			precalc_grids[0][x + (y * GRID_WIDTH)] = (x == 0) ? (GRID_WIDTH - 1) : (x - 1); // lx
+			precalc_grids[1][x + (y * GRID_WIDTH)] = (x == (GRID_WIDTH - 1)) ? 0 : (x + 1); // rx
+			precalc_grids[2][x + (y * GRID_WIDTH)] = (y == 0) ? (GRID_HEIGHT - 1) : (y - 1); // ty
+			precalc_grids[3][x + (y * GRID_WIDTH)] = (y == (GRID_HEIGHT - 1)) ? 0 : (y + 1); // by
+		}
+	}
 
 	gol_idx = 0;
 
@@ -33,10 +48,10 @@ void cgol_step(void) {
 
 	for (x = 0; x < GRID_WIDTH; x++) {
 		for (y = 0; y < GRID_HEIGHT; y++) {
-			lx = (x == 0) ? (GRID_WIDTH - 1) : (x - 1);
-			rx = (x == (GRID_WIDTH - 1)) ? 0 : (x + 1);
-			ty = (y == 0) ? (GRID_HEIGHT - 1) : (y - 1);
-			by = (y == (GRID_HEIGHT - 1)) ? 0 : (y + 1);
+			lx = precalc_grids[0][x + (y * GRID_WIDTH)];
+			rx = precalc_grids[1][x + (y * GRID_WIDTH)];
+			ty = precalc_grids[2][x + (y * GRID_WIDTH)];
+			by = precalc_grids[3][x + (y * GRID_WIDTH)];
 
 			neighb = 0;
 			neighb += cur_grid[lx + (y * GRID_WIDTH)];
