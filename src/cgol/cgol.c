@@ -33,21 +33,20 @@ void cgol_step(void) {
 
 	for (x = 0; x < GRID_WIDTH; x++) {
 		for (y = 0; y < GRID_HEIGHT; y++) {
-			neighb = 0;
-
 			lx = (x == 0) ? (GRID_WIDTH - 1) : (x - 1);
 			rx = (x == (GRID_WIDTH - 1)) ? 0 : (x + 1);
 			ty = (y == 0) ? (GRID_HEIGHT - 1) : (y - 1);
 			by = (y == (GRID_HEIGHT - 1)) ? 0 : (y + 1);
 
-			if (cur_grid[lx + (y * GRID_WIDTH)]) neighb++;
-			if (cur_grid[lx + (ty * GRID_WIDTH)]) neighb++;
-			if (cur_grid[x + (ty * GRID_WIDTH)]) neighb++;
-			if (cur_grid[rx + (ty * GRID_WIDTH)]) neighb++;
-			if (cur_grid[rx + (y * GRID_WIDTH)]) neighb++;
-			if (cur_grid[rx + (by * GRID_WIDTH)]) neighb++;
-			if (cur_grid[x + (by * GRID_WIDTH)]) neighb++;
-			if (cur_grid[lx + (by * GRID_WIDTH)]) neighb++;
+			neighb = 0;
+			neighb += cur_grid[lx + (y * GRID_WIDTH)];
+			neighb += cur_grid[lx + (ty * GRID_WIDTH)];
+			neighb += cur_grid[x + (ty * GRID_WIDTH)];
+			neighb += cur_grid[rx + (ty * GRID_WIDTH)];
+			neighb += cur_grid[rx + (y * GRID_WIDTH)];
+			neighb += cur_grid[rx + (by * GRID_WIDTH)];
+			neighb += cur_grid[x + (by * GRID_WIDTH)];
+			neighb += cur_grid[lx + (by * GRID_WIDTH)];
 
 			if (!cur_grid[x + (y * GRID_WIDTH)] && (neighb == 3))
 				dst_grid[x + (y * GRID_WIDTH)] = 1;
