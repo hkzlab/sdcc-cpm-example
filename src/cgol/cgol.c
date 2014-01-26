@@ -5,7 +5,7 @@
 static uint8_t gol_grids[2][GRID_WIDTH * GRID_HEIGHT];
 static uint8_t gol_idx;
 
-static uint8_t precalc_grids[4][GRID_WIDTH * GRID_HEIGHT];
+static uint8_t precalc_pos_grids[4][GRID_WIDTH * GRID_HEIGHT];
 
 uint8_t *cgol_getGrid(void) {
 	return (gol_grids[gol_idx]);
@@ -24,10 +24,10 @@ void cgol_init(void) {
 		for (y = 0; y < GRID_HEIGHT; y++) {
 			cell_addr = x + (y * GRID_WIDTH);
 
-			precalc_grids[0][cell_addr] = (x == 0) ? (GRID_WIDTH - 1) : (x - 1); // lx
-			precalc_grids[1][cell_addr] = (x == (GRID_WIDTH - 1)) ? 0 : (x + 1); // rx
-			precalc_grids[2][cell_addr] = (y == 0) ? (GRID_HEIGHT - 1) : (y - 1); // ty
-			precalc_grids[3][cell_addr] = (y == (GRID_HEIGHT - 1)) ? 0 : (y + 1); // by
+			precalc_pos_grids[0][cell_addr] = (x == 0) ? (GRID_WIDTH - 1) : (x - 1); // lx
+			precalc_pos_grids[1][cell_addr] = (x == (GRID_WIDTH - 1)) ? 0 : (x + 1); // rx
+			precalc_pos_grids[2][cell_addr] = (y == 0) ? (GRID_HEIGHT - 1) : (y - 1); // ty
+			precalc_pos_grids[3][cell_addr] = (y == (GRID_HEIGHT - 1)) ? 0 : (y + 1); // by
 		}
 	}
 
@@ -54,10 +54,10 @@ void cgol_step(void) {
 		for (y = 0; y < GRID_HEIGHT; y++) {
 			cell_addr = x + (y * GRID_WIDTH);
 
-			lx = precalc_grids[0][cell_addr];
-			rx = precalc_grids[1][cell_addr];
-			ty = precalc_grids[2][cell_addr];
-			by = precalc_grids[3][cell_addr];
+			lx = precalc_pos_grids[0][cell_addr];
+			rx = precalc_pos_grids[1][cell_addr];
+			ty = precalc_pos_grids[2][cell_addr];
+			by = precalc_pos_grids[3][cell_addr];
 
 			neighb = 0;
 			neighb += cur_grid[lx + (y * GRID_WIDTH)];
