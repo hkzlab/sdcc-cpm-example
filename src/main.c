@@ -9,6 +9,7 @@
 
 #include "cgol/cgol.h"
 
+
 void draw_box(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
 
 void sys_init(void) {
@@ -19,15 +20,25 @@ static __sfr __at 0x63 IoPPICtrl;
 */
 
 int main() {
-	int counter = 150;
+	const char *gol_title = "                           Conway's  Game of Life                           ";
+	
+	int counter = 10;
 	uint8_t *grid, x, y;
-
-	printf("HELLO WORLD!\n");
 
 	term_ANSIMode();
 	term_ANSIClrScrn(ed_erase_all);
 
-	draw_box(0, 0, 72, 22);
+	draw_box(0, 1, 54, 22);
+	draw_box(53, 1, 23, 22);
+
+	term_ANSIDirectCursorAddr(1, 1);
+	term_ANSISetParam(ANSI_P_SET_REVR(0));
+
+	for (x = 0; gol_title[x] != '\0'; x++) {
+		cpm_putchar(gol_title[x]);
+	}
+
+	term_ANSISetParam(ANSI_P_SET_AOFF(0));
 
 	cgol_init();
 
@@ -36,7 +47,7 @@ int main() {
 
 	
 		for (y = 0; y < GRID_HEIGHT; y++) {
-			term_ANSIDirectCursorAddr(2, y + 2);
+			term_ANSIDirectCursorAddr(2, y + 3);
 
 			for (x = 0; x < GRID_WIDTH; x++) {
 				if (grid[x + (y * GRID_WIDTH)]) cpm_putchar('X');

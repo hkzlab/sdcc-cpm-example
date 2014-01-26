@@ -3,7 +3,7 @@
 
 #include "common_datatypes.h"
 
-#define GRID_WIDTH 70
+#define GRID_WIDTH 52
 #define GRID_HEIGHT 20
 
 uint8_t *cgol_getGrid(void);
