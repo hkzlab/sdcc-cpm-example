@@ -21,8 +21,8 @@ static __sfr __at 0x63 IoPPICtrl;
 */
 
 int main() {
-	const char *gol_title = "                           Conway's  Game of Life                           ";
-	const char *gol_footer = " Step:                                                                      ";
+	const char *gol_title = "                            Conway's  Game of Life                             ";
+	const char *gol_footer = " Step:                                                                         ";
 	
 	int counter = 200;
 	uint8_t *grid, x, y;
@@ -31,8 +31,8 @@ int main() {
 	term_ANSIMode();
 	term_ANSIClrScrn(ed_erase_all);
 
-	draw_box(0, 1, 54, 22);
-	draw_box(53, 1, 23, 22);
+	draw_box(0, 1, 63, 22);
+	draw_box(62, 1, 17, 22);
 
 	term_ANSISetParam(ANSI_P_SET_REVR(0));
 	term_ANSIDirectCursorAddr(1, 1);
