@@ -81,6 +81,9 @@ $(BIN_DIR)/cpm_sysfunc.rel: $(SYSLIB_SRC_DIR)/cpm_sysfunc.c
 $(BIN_DIR)/ansi_term.rel: $(SYSLIB_SRC_DIR)/ansi_term.c
 	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SYSLIB_SRC_DIR)/ansi_term.c
 
+$(BIN_DIR)/cpmbdos.rel:	$(SRC_DIR)/cpm/cpmbdos.c
+	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SRC_DIR)/cpm/cpmbdos.c
+
 $(BIN_DIR)/cgol.rel: $(SRC_DIR)/cgol/cgol.c
 	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SRC_DIR)/cgol/cgol.c
 
@@ -90,10 +93,10 @@ $(BIN_DIR)/cpm0.rel: $(CPM_SRC_DIR)/cpm0.rel
 	$(QUIET)$(COPY) $(CPM_SRC_DIR)/cpm0.rel $(BIN_DIR)
 	$(QUIET)$(COPY) $(CPM_SRC_DIR)/cpm0.lst $(BIN_DIR)
 
-$(BIN_DIR)/cpmbdos.rel: $(CPM_SRC_DIR)/cpmbdos.rel
-	$(CAS) $(CAS_FLAGS) $(BIN_DIR)/cpmbdos.o $(CPM_SRC_DIR)/cpmbdos.s
-	$(QUIET)$(COPY) $(CPM_SRC_DIR)/cpmbdos.rel $(BIN_DIR)
-	$(QUIET)$(COPY) $(CPM_SRC_DIR)/cpmbdos.lst $(BIN_DIR)
+#$(BIN_DIR)/cpmbdos.rel: $(CPM_SRC_DIR)/cpmbdos.rel
+#	$(CAS) $(CAS_FLAGS) $(BIN_DIR)/cpmbdos.o $(CPM_SRC_DIR)/cpmbdos.s
+#	$(QUIET)$(COPY) $(CPM_SRC_DIR)/cpmbdos.rel $(BIN_DIR)
+#	$(QUIET)$(COPY) $(CPM_SRC_DIR)/cpmbdos.lst $(BIN_DIR)
 
 # Build Host tools
 $(LBIN_DIR)/load: $(LSRC_DIR)/load.c
