@@ -72,5 +72,7 @@ typedef struct {
  */
 uint8_t cpmbdos(BDOSCALL *p);
 
+void cpmbdos_extn(BDOSCALL *p, uint16_t* ret_ba, uint16_t *ret_hl);
+
 #endif /* __CPM_BDOS_INTERFACES__ */
 
