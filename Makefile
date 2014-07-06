@@ -1,6 +1,7 @@
 include common.mk
 
-all: tools libraries examples
+all: tools libraries examples \
+	example-empty
 
 clean:	tools-clean libraries-clean examples-clean 
 	rm -f $(BIN_DIR)/*
@@ -8,4 +9,6 @@ clean:	tools-clean libraries-clean examples-clean
 include tools.mk # Local tools
 include libraries.mk # Libraries
 include examples.mk # Examples
+
+include esrc/empty/empty.mk
 
