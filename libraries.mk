@@ -2,7 +2,7 @@
 libraries: $(BIN_DIR)/cprintf.rel $(BIN_DIR)/cpm0.rel $(BIN_DIR)/cpmbdos.rel $(BIN_DIR)/ansi_term.rel $(BIN_DIR)/cpm_sysfunc.rel 
 
 libraries-clean:
-	rm $(BIN_DIR)/*
+	rm -f $(BIN_DIR)/*.rel
 
 $(BIN_DIR)/cprintf.rel: $(SYSLIB_SRC_DIR)/cprintf.c
 	$(CCC) $(CCC_FLAGS) -o $(BIN_DIR) $(SYSLIB_SRC_DIR)/cprintf.c

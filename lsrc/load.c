@@ -68,7 +68,8 @@ int main(int argc,char **argv)
         strcpy(szComFile,argv[1]);
 
         strcat(szComFile,".com");
-        strcat(szHexFile,".hex");
+        //strcat(szHexFile,".hex");
+        strcat(szHexFile,".ihx");
 
 	memset(memory,0,sizeof(memory));
 

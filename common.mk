@@ -17,6 +17,7 @@ CC = gcc
 ECHO = echo
 COPY = cp
 MOVE = mv
+SED = sed
 
 # Project directories
 SRC_DIR = src/
@@ -27,10 +28,12 @@ BIN_DIR = bin/
 LSRC_DIR = lsrc/
 LBIN_DIR = lbin/
 
-INCLUDE_DIR = $(SRC_DIR)/include
+ESRC_DIR = esrc/
+
+INCLUDE_DIR = -I$(SRC_DIR)/include -I$(SRC_DIR)
 
 # Compilation / Assembly / Linking flags
-CCC_FLAGS = -c -mz80 -D__SDCC__=1 -I $(INCLUDE_DIR)
+CCC_FLAGS = -c -mz80 -D__SDCC__=1 $(INCLUDE_DIR)
 CAS_FLAGS = -plosff 
 CLD_FLAGS = 
 
