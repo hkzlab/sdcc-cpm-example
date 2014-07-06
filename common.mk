@@ -1,0 +1,36 @@
+# Prefixes
+COMPILER_PREFIX = /opt/local/
+COMPILER_LIBS = $(COMPILER_PREFIX)/share/sdcc/lib/z80/
+
+# Options
+QUIET = @
+
+# SDCC commands
+CCC = $(COMPILER_PREFIX)/bin/sdcc
+CAS = $(COMPILER_PREFIX)/bin/sdasz80
+CLD = $(COMPILER_PREFIX)/bin/sdldz80
+
+# Local CC
+CC = gcc
+
+# Misc local commands
+ECHO = echo
+COPY = cp
+MOVE = mv
+
+# Project directories
+SRC_DIR = src/
+CPM_SRC_DIR = $(SRC_DIR)/cpm
+SYSLIB_SRC_DIR = $(SRC_DIR)/syslib
+BIN_DIR = bin/
+
+LSRC_DIR = lsrc/
+LBIN_DIR = lbin/
+
+INCLUDE_DIR = $(SRC_DIR)/include
+
+# Compilation / Assembly / Linking flags
+CCC_FLAGS = -c -mz80 -D__SDCC__=1 -I $(INCLUDE_DIR)
+CAS_FLAGS = -plosff 
+CLD_FLAGS = 
+

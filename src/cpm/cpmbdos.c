@@ -1,6 +1,7 @@
 #include "cpmbdos.h"
 
-uint8_t cpmbdos(BDOSCALL *p) {
+uint8_t cpmbdos(BDOSCALL *p) __naked {
+	p;
 	__asm
 		push	ix
 		ld		ix,#0
@@ -17,8 +18,4 @@ uint8_t cpmbdos(BDOSCALL *p) {
 		pop		ix
 		ret
 	__endasm;
-
-	// This should never be reached, but silences the warning
-	p;
-	return 0;
 }
