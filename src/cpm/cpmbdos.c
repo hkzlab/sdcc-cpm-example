@@ -28,8 +28,8 @@ void cpmbdos_extn(BDOSCALL *p, uint16_t* ret_ba, uint16_t *ret_hl) __naked {
 		ld		ix,#0x00
 		add		ix,sp
 
-		ld		l,4(ix)	; Prepare HL to contain the parameter address
-		ld		h,5(ix)
+		ld		l,4(ix)	; Load the pointer to BDOSCALL p into HL 
+		ld		h,5(ix)	; Prepare HL to contain the parameter address
 
 		ld		c,(hl)	; Load p->func8 in register C
 
@@ -47,17 +47,16 @@ void cpmbdos_extn(BDOSCALL *p, uint16_t* ret_ba, uint16_t *ret_hl) __naked {
 		ld		ix,#0x00
 		add		ix,sp
 
-		ld		l,8(ix)
-		ld		h,9(ix)	; p->func8
-		inc		hl		; Skip p->func8 ...
-		inc		hl		; Skip p->parm16
-		inc		hl		; First byte of ret_ba
+		ld		l,10(ix)
+		ld		h,11(ix) ; Load pointer to ret_ba
 		ld		(hl),b
 		inc		hl
 		ld		(hl),a
 
+		ld		l,12(ix)
+		ld		h,13(ix)
+
 		pop		bc		; Recover the HL we have pushed
-		inc		hl
 		ld		(hl),b
 		inc		hl
 		ld		(hl),c
