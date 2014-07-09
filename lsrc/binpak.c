@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <libgen.h>
 
 void print_usage(const char *p_name);
 
@@ -49,7 +50,7 @@ int main(int argc, char *argv[]) {
 	// The checksum is very simple, but more than adequate for confirming a simple
 	// data transfer, as it can detect missing, extra or changed characters.
 
-	fprintf(stdout, "A:DOWNLOAD.COM %s\r\nU%u\r\n:", argv[optind], user_no);
+	fprintf(stdout, "A:DOWNLOAD %s\r\nU%u\r\n:", basename(argv[optind]), user_no);
 	while (fread(&r_data, 1, 1, in_file) == 1) {
 		fprintf(stdout, "%.02X", r_data);
 		checksum += r_data;
