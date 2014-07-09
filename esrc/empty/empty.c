@@ -14,6 +14,8 @@ void sys_init(void) {
 int main() {
 	sys_init();
 
+	cprintf("This does NOTHING!!! %u %u %u\n", 1, 2, 3);
+
 	return (EXIT_SUCCESS);
 }
 

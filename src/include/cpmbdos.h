@@ -70,9 +70,9 @@ typedef struct {
  *  The other argument depends on the service being requested, but if it's a byte, it is passed in register E, and if a word, in DE.
  *  The second argument is the byte to be typed; it's passed in register E.
  */
-uint8_t cpmbdos(BDOSCALL *p);
+//uint8_t cpmbdos(BDOSCALL *p);
 
-void cpmbdos_extn(BDOSCALL *p, uint16_t* ret_ba, uint16_t *ret_hl);
+uint8_t cpmbdos_extn(BDOSCALL *p, uint16_t* ret_ba, uint16_t *ret_hl);
 
 #endif /* __CPM_BDOS_INTERFACES__ */
 

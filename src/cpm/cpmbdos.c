@@ -1,5 +1,6 @@
 #include "cpmbdos.h"
 
+/*
 uint8_t cpmbdos(BDOSCALL *p) __naked {
 	p;
 	__asm
@@ -19,8 +20,9 @@ uint8_t cpmbdos(BDOSCALL *p) __naked {
 		ret
 	__endasm;
 }
+*/
 
-void cpmbdos_extn(BDOSCALL *p, uint16_t* ret_ba, uint16_t *ret_hl) __naked {
+uint8_t cpmbdos_extn(BDOSCALL *p, uint16_t* ret_ba, uint16_t *ret_hl) __naked {
 	p; ret_ba; ret_hl;
 
 	__asm

@@ -15,6 +15,8 @@ typedef struct {
 static BDOSCALL bdos_readstr;
 static RS_BUFFER rs_buf;
 
+static uint16_t ret_ba, ret_hl;
+
 void cpm_sysfunc_init(void) {
 	// Initialize READSTR BDOS call
 	bdos_readstr.func8 = C_READSTR;
@@ -26,7 +28,7 @@ char *cpm_gets(char *p) {
 	rs_buf.size = sizeof(rs_buf.bytes);
 	rs_buf.len = 0;
 
-	cpmbdos(&bdos_readstr);
+	cpmbdos_extn(&bdos_readstr, &ret_ba, &ret_hl);
 
 	rs_buf.bytes[rs_buf.len] = '\n';
 	strcpy(p, rs_buf.bytes);
@@ -36,36 +38,36 @@ char *cpm_gets(char *p) {
 
 char cpm_getchar(void) {
 	BDOSCALL cread = { C_READ, { (uint16_t)0 } };
-	return cpmbdos(&cread);
+	return cpmbdos_extn(&cread, &ret_ba, &ret_hl);
 }
 
 void cpm_putchar(char c) {
 	BDOSCALL cwrite = { C_WRITE, { (uint16_t)c } };
-	cpmbdos(&cwrite);
+	cpmbdos_extn(&cwrite, &ret_ba, &ret_hl);
 }
 
 void cpm_setDMAAddr(uint16_t addr) {
 	BDOSCALL fdma = { F_DMAOFF, {addr} };
 
-	cpmbdos(&fdma);
+	cpmbdos_extn(&fdma, &ret_ba, &ret_hl);
 }
 
 uint8_t cpm_getCurDrive(void) {
 	BDOSCALL drv = { DRV_GET, { 0 } };
 
-	return cpmbdos(&drv);	
+	return cpmbdos_extn(&drv, &ret_ba, &ret_hl);	
 }
 
 uint8_t cpm_resetDrives(void) {
 	BDOSCALL drv = { DRV_ALLRESET, { 0 } };
 
-	return cpmbdos(&drv);	
+	return cpmbdos_extn(&drv, &ret_ba, &ret_hl);	
 }
 
 uint8_t cpm_setCurDrive(uint8_t drive) {
 	BDOSCALL drv = { DRV_SET, { drive } };
 
-	return cpmbdos(&drv);
+	return cpmbdos_extn(&drv, &ret_ba, &ret_hl);
 }
 
 void cpm_setFCBname(char *fname, char *ftype, FCB *cb) {
@@ -142,5 +144,5 @@ uint8_t cpm_performFileOp(FileOperation fop, FCB *cb) {
 			break;
 	}
 
-	return cpmbdos(&call);
+	return cpmbdos_extn(&call, &ret_ba, &ret_hl);
 }
