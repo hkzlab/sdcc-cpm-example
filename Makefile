@@ -1,7 +1,7 @@
 include common.mk
 
 all: tools libraries examples \
-	example-empty
+	example-empty fileop-empty
 
 clean:	tools-clean libraries-clean examples-clean 
 	rm -f $(BIN_DIR)/*
@@ -11,4 +11,5 @@ include libraries.mk # Libraries
 include examples.mk # Examples
 
 include esrc/empty/empty.mk
+include esrc/fileop/fileop.mk
 
