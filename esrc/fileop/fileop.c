@@ -11,6 +11,8 @@ void sys_init(void) {
 	cpm_sysfunc_init();
 }
 
+void print_fcb(FCB *fcb_ptr);
+
 int main() {
 	uint8_t rval;
 	FCB *fcb_ptr = NULL;
@@ -29,6 +31,31 @@ int main() {
 
 	if (rval != 0xFF) {
 		cprintf("File found, reading the FCB!\n");
+
+		print_fcb(fcb_ptr);
+
+		cprintf("Done, closing the file... ");
+		rval = cpm_performFileOp(fop_close, fcb_ptr);
+		cprintf(" ret.val %02X\n", rval);
+	}
+	
+	cprintf("Trying a file search... ");
+
+	memset(fcb_ptr, 0, sizeof(FCB));
+	cpm_setFCBname("f?l??p", "??m", fcb_ptr);
+	
+	rval = cpm_performFileOp(fop_firstNameNatch, fcb_ptr);
+	
+	cprintf("Result %02X\n", rval);
+
+	free(fcb_ptr);
+
+	return (EXIT_SUCCESS);
+}
+
+void print_fcb(FCB *fcb_ptr) {
+		cprintf("\tname ->\t%c%c%c%c%c%c%c%c\n", fcb_ptr->filename[0], fcb_ptr->filename[1], fcb_ptr->filename[2], fcb_ptr->filename[3], fcb_ptr->filename[4], fcb_ptr->filename[5], fcb_ptr->filename[6], fcb_ptr->filename[7]);
+		cprintf("\ttype ->\t%c%c%c\n", fcb_ptr->filetype[0], fcb_ptr->filetype[1], fcb_ptr->filetype[2]);
 		cprintf("\t  ex ->\t%02X\n",fcb_ptr->ex);
 		cprintf("\tresv ->\t%04X\n",fcb_ptr->resv);
 		cprintf("\t  rc ->\t%02X\n",fcb_ptr->rc);
@@ -37,14 +64,4 @@ int main() {
 		cprintf("\tsreq ->\t%02X\n",fcb_ptr->seqreq);
 		cprintf("\trrec ->\t%04X\n",fcb_ptr->rrec);
 		cprintf("\trreo ->\t%02X\n\n",fcb_ptr->rrecob);
-		
-		cprintf("Done, closing the file... ");
-		rval = cpm_performFileOp(fop_close, fcb_ptr);
-		cprintf(" ret.val %02X\n", rval);
-	}
-
-	free(fcb_ptr);
-
-	return (EXIT_SUCCESS);
 }
-

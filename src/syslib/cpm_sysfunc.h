@@ -19,6 +19,7 @@ typedef struct {
 typedef enum {
 	fop_open,
 	fop_close,
+	fop_firstNameNatch,
 	fop_makeFile,
 	fop_delFile,
 	fop_setFileAttr,
