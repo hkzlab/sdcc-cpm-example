@@ -1,6 +1,6 @@
 #include "cpmbdos.h"
 
-/*
+
 uint8_t cpmbdos(BDOSCALL *p) __naked {
 	p;
 	__asm
@@ -20,7 +20,7 @@ uint8_t cpmbdos(BDOSCALL *p) __naked {
 		ret
 	__endasm;
 }
-*/
+
 
 uint8_t cpmbdos_extn(BDOSCALL *p, uint16_t* ret_ba, uint16_t *ret_hl) __naked {
 	p; ret_ba; ret_hl;
@@ -62,6 +62,9 @@ uint8_t cpmbdos_extn(BDOSCALL *p, uint16_t* ret_ba, uint16_t *ret_hl) __naked {
 		ld		(hl),b
 		inc		hl
 		ld		(hl),c
+
+		push 	bc; Put HL back where it belongs
+		pop		hl;
 
 		pop		bc ; Restore BC
 		pop		ix ; Restore IX

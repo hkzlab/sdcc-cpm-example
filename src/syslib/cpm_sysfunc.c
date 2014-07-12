@@ -107,9 +107,6 @@ uint8_t cpm_performFileOp(FileOperation fop, FCB *cb) {
 	switch (fop) {
 		case fop_open:
 			call.func8 = F_OPEN;
-			
-			cb->ex = cb->s1 = 0;
-			cb->s2 = cb->rc = 0;
 			break;
 		case fop_close:
 			call.func8 = F_CLOSE;
@@ -145,4 +142,10 @@ uint8_t cpm_performFileOp(FileOperation fop, FCB *cb) {
 	}
 
 	return cpmbdos_extn(&call, &ret_ba, &ret_hl);
+	//return cpmbdos(&call);
+}
+
+void cpm_reset(void) {
+	BDOSCALL sreset = { S_RESET, { (uint16_t)0 } };
+	cpmbdos_extn(&sreset, &ret_ba, &ret_hl);
 }

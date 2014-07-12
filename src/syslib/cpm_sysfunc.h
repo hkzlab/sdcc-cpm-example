@@ -4,18 +4,16 @@
 #include "common_datatypes.h"
 
 typedef struct {
-	uint8_t drive;
-	char filename[8];
-	char filetype[3];
-	uint8_t ex;
-	uint8_t s1;
-	uint8_t s2;
-	uint8_t rc;
-	uint8_t al[16];
-	uint8_t cr;
-	uint8_t r0;
-	uint8_t r1;
-	uint8_t r2;
+	uint8_t drive; // 0 -> Searches in default disk drive
+	char filename[8]; // File name (when opening a '?' means 'any character')
+	char filetype[3]; // File type
+	uint8_t ex; // Extent
+	uint16_t resv; // Reserved for CP/M
+	uint8_t rc; // Records used in extent
+	uint16_t alb[8]; // Allocation blocks used
+	uint8_t seqreq; // Sequential records to read/write
+	uint16_t rrec; // Random record to read/write 
+	uint8_t rrecob; // Random record overflow byte (MS)
 } FCB; /* File Control Block */
 
 typedef enum {
@@ -33,6 +31,8 @@ typedef enum {
 } FileOperation;
 
 void cpm_sysfunc_init(void);
+
+void cpm_reset(void);
 
 char *cpm_gets(char *p);
 char cpm_getchar(void);

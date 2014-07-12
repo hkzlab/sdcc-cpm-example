@@ -16,6 +16,7 @@
 
 // BDOS calls
 // See here: http://www.seasip.demon.co.uk/Cpm/bdos.html
+#define S_RESET		 0
 #define C_READ       1
 #define C_WRITE      2
 #define A_READ       3
@@ -70,7 +71,7 @@ typedef struct {
  *  The other argument depends on the service being requested, but if it's a byte, it is passed in register E, and if a word, in DE.
  *  The second argument is the byte to be typed; it's passed in register E.
  */
-//uint8_t cpmbdos(BDOSCALL *p);
+uint8_t cpmbdos(BDOSCALL *p);
 
 uint8_t cpmbdos_extn(BDOSCALL *p, uint16_t* ret_ba, uint16_t *ret_hl);
 
