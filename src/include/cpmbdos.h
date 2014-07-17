@@ -32,6 +32,7 @@
 #define F_OPEN       15
 #define F_CLOSE      16
 #define F_SMATCH     17
+#define F_NMATCH     18
 #define F_DELETE     19
 #define F_READ       20
 #define F_WRITE      21

@@ -10,16 +10,28 @@ typedef struct {
 	uint8_t ex; // Extent
 	uint16_t resv; // Reserved for CP/M
 	uint8_t rc; // Records used in extent
-	uint16_t alb[8]; // Allocation blocks used
+	uint8_t alb[16]; // Allocation blocks used
 	uint8_t seqreq; // Sequential records to read/write
 	uint16_t rrec; // Random record to read/write 
 	uint8_t rrecob; // Random record overflow byte (MS)
 } FCB; /* File Control Block */
 
+typedef struct {
+	uint8_t status;
+	char filename[8];
+	char filetype[3];
+	uint8_t xl;
+	uint8_t bc;
+	uint8_t xh;
+	uint8_t rc;
+	uint8_t alb[16];
+} CPM_DIR;
+
 typedef enum {
 	fop_open,
 	fop_close,
-	fop_firstNameNatch,
+	fop_firstNameMatch,
+	fop_nextMatch,
 	fop_makeFile,
 	fop_delFile,
 	fop_setFileAttr,

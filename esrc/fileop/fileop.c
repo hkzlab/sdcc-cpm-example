@@ -7,11 +7,14 @@
 #include "syslib/cpm_sysfunc.h"
 #include "syslib/ansi_term.h"
 
+static uint8_t dma_buffer[32 * 4];
+
 void sys_init(void) {
 	cpm_sysfunc_init();
 }
 
 void print_fcb(FCB *fcb_ptr);
+void print_dir(CPM_DIR *dir_ptr);
 
 int main() {
 	uint8_t rval;
@@ -44,9 +47,15 @@ int main() {
 	memset(fcb_ptr, 0, sizeof(FCB));
 	cpm_setFCBname("f?l??p", "??m", fcb_ptr);
 	
-	rval = cpm_performFileOp(fop_firstNameNatch, fcb_ptr);
-	
+	cpm_setDMAAddr((uint16_t)dma_buffer);
+	rval = cpm_performFileOp(fop_firstNameMatch, fcb_ptr);
 	cprintf("Result %02X\n", rval);
+	//rval = cpm_performFileOp(fop_firstNameMatch, fcb_ptr);
+	if (rval != 0xFF) {
+		CPM_DIR *dirstruct = (CPM_DIR*)((uint16_t)dma_buffer + (rval*32));
+		print_dir(dirstruct);
+	}
+
 
 	free(fcb_ptr);
 
@@ -64,4 +73,9 @@ void print_fcb(FCB *fcb_ptr) {
 		cprintf("\tsreq ->\t%02X\n",fcb_ptr->seqreq);
 		cprintf("\trrec ->\t%04X\n",fcb_ptr->rrec);
 		cprintf("\trreo ->\t%02X\n\n",fcb_ptr->rrecob);
+}
+
+void print_dir(CPM_DIR *dir_ptr) {
+		cprintf("\tname ->\t%c%c%c%c%c%c%c%c\n", dir_ptr->filename[0], dir_ptr->filename[1], dir_ptr->filename[2], dir_ptr->filename[3], dir_ptr->filename[4], dir_ptr->filename[5], dir_ptr->filename[6], dir_ptr->filename[7]);
+		cprintf("\ttype ->\t%c%c%c\n\n", dir_ptr->filetype[0], dir_ptr->filetype[1], dir_ptr->filetype[2]);
 }

@@ -111,8 +111,11 @@ uint8_t cpm_performFileOp(FileOperation fop, FCB *cb) {
 		case fop_close:
 			call.func8 = F_CLOSE;
 			break;
-		case fop_firstNameNatch:
+		case fop_firstNameMatch:
 			call.func8 = F_SMATCH;
+			break;
+		case fop_nextMatch:
+			call.func8 = F_NMATCH;
 			break;
 		case fop_makeFile:
 			call.func8 = F_MAKE;
