@@ -7,7 +7,8 @@
 #include "syslib/cpm_sysfunc.h"
 #include "syslib/ansi_term.h"
 
-static uint8_t dma_buffer[32 * 4];
+#define BUF_SIZE 128
+static uint8_t dma_buffer[BUF_SIZE];
 
 void sys_init(void) {
 	cpm_sysfunc_init();
@@ -15,6 +16,7 @@ void sys_init(void) {
 
 void print_fcb(FCB *fcb_ptr);
 void print_dir(CPM_DIR *dir_ptr);
+void print_buf(void);
 
 int main() {
 	uint8_t rval;
@@ -62,6 +64,17 @@ int main() {
 	rval = cpm_performFileOp(fop_delFile, fcb_ptr);
 	cprintf(" ret.val %02X\n", rval);
 
+	cprintf("Trying a read... ");
+	memset(fcb_ptr, 0, sizeof(FCB));
+	cpm_setFCBname("fileop", "com", fcb_ptr);
+	rval = cpm_performFileOp(fop_open, fcb_ptr);
+	cpm_setDMAAddr((uint16_t)dma_buffer);
+	rval = cpm_performFileOp(fop_readRandRecord, fcb_ptr);
+	cprintf(" ret.val %02X\n", rval);
+	if (rval == 0) {
+		print_buf();
+	}
+
 	free(fcb_ptr);
 
 	return (EXIT_SUCCESS);
@@ -83,4 +96,12 @@ void print_fcb(FCB *fcb_ptr) {
 void print_dir(CPM_DIR *dir_ptr) {
 		cprintf("\tname ->\t%c%c%c%c%c%c%c%c\n", dir_ptr->filename[0], dir_ptr->filename[1], dir_ptr->filename[2], dir_ptr->filename[3], dir_ptr->filename[4], dir_ptr->filename[5], dir_ptr->filename[6], dir_ptr->filename[7]);
 		cprintf("\ttype ->\t%c%c%c\n\n", dir_ptr->filetype[0], dir_ptr->filetype[1], dir_ptr->filetype[2]);
+}
+
+void print_buf(void) {
+	uint8_t idx;
+	for (idx = 0; idx < BUF_SIZE; idx++) {
+		if(!(idx%16)) cprintf("\n%04X --- ", idx/16);
+		cprintf("%02X ", dma_buffer[idx]);
+	}
 }
