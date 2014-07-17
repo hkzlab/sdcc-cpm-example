@@ -56,6 +56,11 @@ int main() {
 		print_dir(dirstruct);
 	}
 
+	cprintf("Trying a file delete... ");
+	memset(fcb_ptr, 0, sizeof(FCB));
+	cpm_setFCBname("test", "txt", fcb_ptr);
+	rval = cpm_performFileOp(fop_delFile, fcb_ptr);
+	cprintf(" ret.val %02X\n", rval);
 
 	free(fcb_ptr);
 
