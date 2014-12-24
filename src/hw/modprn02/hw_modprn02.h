@@ -1,0 +1,5 @@
+#ifndef _HWLIB_MODPRN02_HEADER_
+#define _HWLIB_MODPRN02_HEADER_
+
+#endif /* _HWLIB_MODPRN02_HEADER_ */
+

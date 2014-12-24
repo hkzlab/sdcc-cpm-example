@@ -7,6 +7,8 @@
 #include "syslib/cpm_sysfunc.h"
 #include "syslib/ansi_term.h"
 
+#include "hw/modprn02/hw_modprn02.h"
+
 void sys_init(void) {
 	cpm_sysfunc_init();
 }

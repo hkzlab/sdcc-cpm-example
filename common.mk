@@ -24,6 +24,7 @@ SED = sed
 SRC_DIR = src/
 CPM_SRC_DIR = $(SRC_DIR)/cpm
 SYSLIB_SRC_DIR = $(SRC_DIR)/syslib
+HWLIB_SRC_DIR = $(SRC_DIR)/hw
 BIN_DIR = bin/
 
 LSRC_DIR = lsrc/
