@@ -53,5 +53,8 @@ typedef enum {
 	parity_none = 0x00
 } MPRN_Parity;
 
+
+void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity);
+
 #endif /* _HWLIB_MODPRN02_HEADER_ */
 
