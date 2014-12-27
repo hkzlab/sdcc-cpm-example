@@ -11,7 +11,6 @@ void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Sto
 }
 
 void ctc_init(MPRN_Channel chan, MPRN_BaudRate brate) {
-	uint8_t idx;
 	uint8_t ctc_command = 0x57; // Enable time constant sending, low-to-high pulse front trigger, counter mode, interrupts disabled
 	
 	hw_outp(MODPRN02_CTC_CHAN_0 + chan, ctc_command);
