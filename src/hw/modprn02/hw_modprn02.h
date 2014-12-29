@@ -65,5 +65,8 @@ void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Sto
 void modprn_outch(MPRN_Channel chan, uint8_t ch);
 uint8_t modprn_getch(MPRN_Channel chan);
 
+uint8_t modprn_getBreakStatus(MPRN_Channel chan);
+void modprn_sendBreak(MPRN_Channel chan);
+
 #endif /* _HWLIB_MODPRN02_HEADER_ */
 

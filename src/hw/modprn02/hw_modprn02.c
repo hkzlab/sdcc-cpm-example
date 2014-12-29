@@ -18,8 +18,10 @@
 #define SIO_REG0_CTS_FLAG	0x20	
 #define SIO_REG0_RXAVAIL_FLAG	0x01
 #define SIO_REG0_TXEMPTY_FLAG	0x04
+#define SIO_REG0_BREAK_FLAG	0x80
 
 #define SIO_REG5_RTS_FLAG	0x02
+#define SIO_REG5_BREAK_FLAG	0x10
 
 static uint8_t flowControl_status[] = {0, 0};
 static uint8_t reg5_status[] = {0, 0};
@@ -99,4 +101,26 @@ uint8_t modprn_getch(MPRN_Channel chan) {
 	}
 
 	return ch;
+}
+
+uint8_t modprn_getBreakStatus(MPRN_Channel chan) {
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Select register 0
+	return (hw_inp(MODPRN02_SIO_A_CTRL + chan) & SIO_REG0_BREAK_FLAG);
+}
+
+void modprn_sendBreak(MPRN_Channel chan) {
+	uint8_t idx;
+
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan] | SIO_REG5_BREAK_FLAG); // Send the break signal
+
+	idx = 0xFF;
+	while(idx--) {
+		__asm
+			nop
+		__endasm;
+	}
+	
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan]); // Disable break signal
 }
