@@ -15,7 +15,14 @@
 #define SIO_CRC_CMD_RST_TXCRC_GEN	0x80
 #define SIO_CRC_CMD_RST_CRC	0xC0
 
+#define SIO_REG0_CTS_FLAG	0x20	
+#define SIO_REG0_RXAVAIL_FLAG	0x01
+#define SIO_REG0_TXEMPTY_FLAG	0x04
+
+#define SIO_REG5_RTS_FLAG	0x02
+
 static uint8_t flowControl_status[] = {0, 0};
+static uint8_t reg5_status[] = {0, 0};
 
 // Initialize the CTC IC 
 void ctc_init(MPRN_Channel chan, MPRN_BaudRate brate);
@@ -36,8 +43,19 @@ void ctc_init(MPRN_Channel chan, MPRN_BaudRate brate) {
 }
 
 void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity, uint8_t flowControl) {
+	// Register 0
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x30); // Error reset
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, SIO_BASIC_CMD_RST_CHN); // Reset the channel
 
+	// Register 4
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x04); // Select register 4
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, sbit | parity); // Set parity, stop bits and X1 clock mode
+	
+	// Register 5
+	reg5_status[chan] = 0x88 | (bpc >> 1); // Enable Tx, set Tx bits
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan]);
+	
 	// Register 1
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x01); // Select register 1
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Disable interrupts
@@ -45,14 +63,40 @@ void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parit
 	// Register 3
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x03); // Select register 3
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, (0x01 | bpc)); // Set rx bits and enable RX
-	
-	// Register 4
-	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x04); // Select register 4
-	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x30 | sbit | parity); // Set parity, stop bits, external sync and X1 clock mode
-	
-	// Register 5
-	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
-	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x08 | (bpc >> 1)); // Enable Tx, set Tx bits
 
 	flowControl_status[chan] = flowControl;
+}
+
+void modprn_outch(MPRN_Channel chan, uint8_t ch) {
+	uint8_t reg_0 = 0;
+
+	do {
+		hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Select register 0
+		reg_0 = hw_inp(MODPRN02_SIO_A_CTRL + chan);
+	} while(!(reg_0 & SIO_REG0_TXEMPTY_FLAG) || (flowControl_status[chan] && !(reg_0 & SIO_REG0_CTS_FLAG)));
+
+	hw_outp(MODPRN02_SIO_A_DATA + chan, ch);
+}
+
+uint8_t modprn_getch(MPRN_Channel chan) {
+	uint8_t ch = 0;
+
+	if (flowControl_status[chan]) {
+		hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
+		hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan] | SIO_REG5_RTS_FLAG);
+	}
+
+	while(1) {
+		hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Select register 0
+		if(hw_inp(MODPRN02_SIO_A_CTRL + chan) & SIO_REG0_RXAVAIL_FLAG) break;
+	}
+
+	ch = hw_inp(MODPRN02_SIO_A_DATA + chan);
+
+	if (flowControl_status[chan]) {
+		hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
+		hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan]);
+	}
+
+	return ch;
 }

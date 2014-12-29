@@ -12,13 +12,27 @@
 void sys_init(void) {
 	cpm_sysfunc_init();
 
-	setup_modprn(Channel_A, BRate_9600, bpc_8, stop_1, parity_none, 0);
+	setup_modprn(Channel_A, BRate_9600, bpc_8, stop_1, parity_none, 1);
 }
 
 int main() {
+	const char *test_string = "TEST A B C D!\r\n\n";
+	int idx;
+
 	sys_init();
 
-	cprintf("This does NOTHING!!! %u %u %u\n", 1, 2, 3);
+	cprintf("Testing MODPRN Channel A\n");
+
+	idx = 0;
+	while(test_string[idx] != 0) {
+		modprn_outch(Channel_A, test_string[idx]);
+		idx++;
+	}
+	idx = 0;
+	while(idx < 10) {
+		cprintf("%c\n", modprn_getch(Channel_A));
+		idx++;	
+	}
 
 	return (EXIT_SUCCESS);
 }
