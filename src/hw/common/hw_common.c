@@ -39,3 +39,11 @@ uint8_t hw_inp(uint8_t port) __naked {
 		ret
 	__endasm;
 }
+
+void hw_smallDelay(uint8_t delay) {
+	while(delay--) {
+		__asm
+			nop
+		__endasm;
+	}
+}

@@ -51,7 +51,7 @@ void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parit
 
 	// Register 4
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x04); // Select register 4
-	hw_outp(MODPRN02_SIO_A_CTRL + chan, sbit | parity); // Set parity, stop bits and X1 clock mode
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x30 |sbit | parity); // Set parity, stop bits and X1 clock mode
 	
 	// Register 5
 	reg5_status[chan] = 0x88 | (bpc >> 1); // Enable Tx, set Tx bits
@@ -90,7 +90,9 @@ uint8_t modprn_getch(MPRN_Channel chan) {
 
 	while(1) {
 		hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Select register 0
-		if(hw_inp(MODPRN02_SIO_A_CTRL + chan) & SIO_REG0_RXAVAIL_FLAG) break;
+		if(hw_inp(MODPRN02_SIO_A_CTRL + chan) & SIO_REG0_RXAVAIL_FLAG) {
+			break;
+		}
 	}
 
 	ch = hw_inp(MODPRN02_SIO_A_DATA + chan);
