@@ -51,7 +51,7 @@ void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parit
 
 	// Register 4
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x04); // Select register 4
-	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x30 |sbit | parity); // Set parity, stop bits and X1 clock mode
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x30 |sbit | parity); // Set external sync, parity, stop bits and X1 clock mode
 	
 	// Register 5
 	reg5_status[chan] = 0x88 | (bpc >> 1); // Enable Tx, set Tx bits
