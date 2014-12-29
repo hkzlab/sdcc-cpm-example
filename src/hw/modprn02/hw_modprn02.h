@@ -8,16 +8,22 @@
 #define MODPRN02_CLOCK (2457600L / 2) // Hz
 
 // SIO
+/*
 #define MODPRN02_SIO_A_DATA (MODPRN02_BASE_PORT + 0x00)
 #define MODPRN02_SIO_A_CTRL (MODPRN02_BASE_PORT + 0x01)
 #define MODPRN02_SIO_B_DATA (MODPRN02_BASE_PORT + 0x02)
+#define MODPRN02_SIO_B_CTRL (MODPRN02_BASE_PORT + 0x03)
+*/
+#define MODPRN02_SIO_A_DATA (MODPRN02_BASE_PORT + 0x00)
+#define MODPRN02_SIO_B_DATA (MODPRN02_BASE_PORT + 0x01)
+#define MODPRN02_SIO_A_CTRL (MODPRN02_BASE_PORT + 0x02)
 #define MODPRN02_SIO_B_CTRL (MODPRN02_BASE_PORT + 0x03)
 
 // CTC
 #define MODPRN02_CTC_CHAN_0 (MODPRN02_BASE_PORT + 0x04 + 0x00)
 #define MODPRN02_CTC_CHAN_1 (MODPRN02_BASE_PORT + 0x04 + 0x01)
-#define MODPRN02_SIO_CHAN_2 (MODPRN02_BASE_PORT + 0x04 + 0x02)
-#define MODPRN02_SIO_CHAN_3 (MODPRN02_BASE_PORT + 0x04 + 0x03)
+#define MODPRN02_CTC_CHAN_2 (MODPRN02_BASE_PORT + 0x04 + 0x02)
+#define MODPRN02_CTC_CHAN_3 (MODPRN02_BASE_PORT + 0x04 + 0x03)
 
 typedef enum {
 	Channel_A = 0,
@@ -54,7 +60,7 @@ typedef enum {
 } MPRN_Parity;
 
 
-void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity);
+void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity, uint8_t flowControl);
 
 #endif /* _HWLIB_MODPRN02_HEADER_ */
 

@@ -15,16 +15,17 @@
 #define SIO_CRC_CMD_RST_TXCRC_GEN	0x80
 #define SIO_CRC_CMD_RST_CRC	0xC0
 
+static uint8_t flowControl_status[] = {0, 0};
 
 // Initialize the CTC IC 
 void ctc_init(MPRN_Channel chan, MPRN_BaudRate brate);
-void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity);
+void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity, uint8_t flowControl);
 
 /*********************************/
 
-void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity) {
+void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity, uint8_t flowControl) {
 	ctc_init(chan, brate);
-	sio_init(chan, bpc, sbit, parity);
+	sio_init(chan, bpc, sbit, parity, flowControl);
 }
 
 void ctc_init(MPRN_Channel chan, MPRN_BaudRate brate) {
@@ -34,26 +35,24 @@ void ctc_init(MPRN_Channel chan, MPRN_BaudRate brate) {
 	hw_outp(MODPRN02_CTC_CHAN_0 + chan, (uint8_t)brate); // Send the time constant. This will divide our input clock.
 }
 
-void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity) {
-	hw_outp(MODPRN02_CTC_CHAN_0 + chan, SIO_BASIC_CMD_RST_CHN); // Reset the channel
+void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity, uint8_t flowControl) {
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, SIO_BASIC_CMD_RST_CHN); // Reset the channel
 
 	// Register 1
-	hw_outp(MODPRN02_CTC_CHAN_0 + chan, 0x01); // Select register 1
-	hw_outp(MODPRN02_CTC_CHAN_0 + chan, 0x00); // Disable interrupts
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x01); // Select register 1
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Disable interrupts
 	
 	// Register 3
-	hw_outp(MODPRN02_CTC_CHAN_0 + chan, 0x03); // Select register 3
-	hw_outp(MODPRN02_CTC_CHAN_0 + chan, (0x01 | bpc)); // Set rx bits and enable RX
-	
-	// Register 3
-	hw_outp(MODPRN02_CTC_CHAN_0 + chan, 0x03); // Select register 3
-	hw_outp(MODPRN02_CTC_CHAN_0 + chan, (0x01 | bpc)); // Set rx bits and enable RX
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x03); // Select register 3
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, (0x01 | bpc)); // Set rx bits and enable RX
 	
 	// Register 4
-	hw_outp(MODPRN02_CTC_CHAN_0 + chan, 0x04); // Select register 4
-	hw_outp(MODPRN02_CTC_CHAN_0 + chan, 0x30 | sbit | parity); // Set parity, stop bits, external sync and X1 clock mode
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x04); // Select register 4
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x30 | sbit | parity); // Set parity, stop bits, external sync and X1 clock mode
 	
 	// Register 5
-	hw_outp(MODPRN02_CTC_CHAN_0 + chan, 0x05); // Select register 5
-	hw_outp(MODPRN02_CTC_CHAN_0 + chan, 0x08 | (bpc >> 1)); // Enable Tx, set Tx bits
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x08 | (bpc >> 1)); // Enable Tx, set Tx bits
+
+	flowControl_status[chan] = flowControl;
 }
