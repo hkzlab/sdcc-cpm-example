@@ -6,14 +6,11 @@
 #define MODPRN02_BASE_PORT 0x48
 
 #define MODPRN02_CLOCK (2457600L / 2) // Hz
+//#define MODPRN02_CLOCK (2457600L / 4) // Hz
+
+#define MODPRN02_SIO_MULTIPLIER	16
 
 // SIO
-/*
-#define MODPRN02_SIO_A_DATA (MODPRN02_BASE_PORT + 0x00)
-#define MODPRN02_SIO_A_CTRL (MODPRN02_BASE_PORT + 0x01)
-#define MODPRN02_SIO_B_DATA (MODPRN02_BASE_PORT + 0x02)
-#define MODPRN02_SIO_B_CTRL (MODPRN02_BASE_PORT + 0x03)
-*/
 #define MODPRN02_SIO_A_DATA (MODPRN02_BASE_PORT + 0x00)
 #define MODPRN02_SIO_B_DATA (MODPRN02_BASE_PORT + 0x01)
 #define MODPRN02_SIO_A_CTRL (MODPRN02_BASE_PORT + 0x02)
@@ -31,13 +28,11 @@ typedef enum {
 } MPRN_Channel;
 
 typedef enum {
-	BRate_4800 = (MODPRN02_CLOCK / 4800L),
-	BRate_9600 = (MODPRN02_CLOCK / 9600L),
-	BRate_19200 = (MODPRN02_CLOCK / 19200L),
-	BRate_38400 = (MODPRN02_CLOCK / 38400L),
-	BRate_76800 = (MODPRN02_CLOCK / 76800L),
-	BRate_153600 = (MODPRN02_CLOCK / 153600L),
-	BRate_307200 = (MODPRN02_CLOCK / 307200L)
+	BRate_2400 = (MODPRN02_CLOCK / (2400L*MODPRN02_SIO_MULTIPLIER)),
+	BRate_4800 = (MODPRN02_CLOCK / (4800L*MODPRN02_SIO_MULTIPLIER)),
+	BRate_9600 = (MODPRN02_CLOCK / (9600L*MODPRN02_SIO_MULTIPLIER)),
+	BRate_19200 = (MODPRN02_CLOCK / (19200L*MODPRN02_SIO_MULTIPLIER)),
+	BRate_38400 = (MODPRN02_CLOCK / (38400L*MODPRN02_SIO_MULTIPLIER))
 } MPRN_BaudRate;
 
 typedef enum {
@@ -60,7 +55,7 @@ typedef enum {
 } MPRN_Parity;
 
 
-void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity, uint8_t flowControl);
+void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity);
 
 void modprn_outch(MPRN_Channel chan, uint8_t ch);
 uint8_t modprn_getch(MPRN_Channel chan);

@@ -23,18 +23,18 @@
 #define SIO_REG5_RTS_FLAG	0x02
 #define SIO_REG5_BREAK_FLAG	0x10
 
-static uint8_t flowControl_status[] = {0, 0};
 static uint8_t reg5_status[] = {0, 0};
+static uint8_t reg3_status[] = {0, 0};
 
 // Initialize the CTC IC 
 void ctc_init(MPRN_Channel chan, MPRN_BaudRate brate);
-void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity, uint8_t flowControl);
+void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity);
 
 /*********************************/
 
-void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity, uint8_t flowControl) {
+void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity) {
 	ctc_init(chan, brate);
-	sio_init(chan, bpc, sbit, parity, flowControl);
+	sio_init(chan, bpc, sbit, parity);
 }
 
 void ctc_init(MPRN_Channel chan, MPRN_BaudRate brate) {
@@ -44,17 +44,19 @@ void ctc_init(MPRN_Channel chan, MPRN_BaudRate brate) {
 	hw_outp(MODPRN02_CTC_CHAN_0 + chan, (uint8_t)brate); // Send the time constant. This will divide our input clock.
 }
 
-void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity, uint8_t flowControl) {
+void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity) {
 	// Register 0
-	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x30); // Error reset
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, SIO_BASIC_CMD_RST_CHN); // Reset the channel
+	__asm
+		nop
+	__endasm;
 
 	// Register 4
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x04); // Select register 4
-	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x30 |sbit | parity); // Set external sync, parity, stop bits and X1 clock mode
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x40 |sbit | parity); // Set external sync, parity, stop bits and x16 clock mode
 	
 	// Register 5
-	reg5_status[chan] = 0x88 | (bpc >> 1); // Enable Tx, set Tx bits
+	reg5_status[chan] = 0x08 | (bpc >> 1); // Enable Tx, set Tx bits
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan]);
 	
@@ -64,9 +66,7 @@ void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parit
 	
 	// Register 3
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x03); // Select register 3
-	hw_outp(MODPRN02_SIO_A_CTRL + chan, (0x01 | bpc)); // Set rx bits and enable RX
-
-	flowControl_status[chan] = flowControl;
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, (0x01|bpc)); // Set rx bits and enable RX
 }
 
 void modprn_outch(MPRN_Channel chan, uint8_t ch) {
@@ -75,32 +75,32 @@ void modprn_outch(MPRN_Channel chan, uint8_t ch) {
 	do {
 		hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Select register 0
 		reg_0 = hw_inp(MODPRN02_SIO_A_CTRL + chan);
-	} while(!(reg_0 & SIO_REG0_TXEMPTY_FLAG) || (flowControl_status[chan] && !(reg_0 & SIO_REG0_CTS_FLAG)));
+	} while(!(reg_0 & SIO_REG0_TXEMPTY_FLAG) || !(reg_0 & SIO_REG0_CTS_FLAG));
 
 	hw_outp(MODPRN02_SIO_A_DATA + chan, ch);
 }
 
 uint8_t modprn_getch(MPRN_Channel chan) {
-	uint8_t ch = 0;
+	uint8_t reg_0 = 0;
+	uint8_t ch;
 
-	if (flowControl_status[chan]) {
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Select register 0
+	reg_0 = hw_inp(MODPRN02_SIO_A_CTRL + chan);
+
+	if (!(reg_0 & SIO_REG0_RXAVAIL_FLAG)) { // If we already have a char waiting, raising the RTS line could cause overrun!
 		hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
 		hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan] | SIO_REG5_RTS_FLAG);
-	}
 
-	while(1) {
-		hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Select register 0
-		if(hw_inp(MODPRN02_SIO_A_CTRL + chan) & SIO_REG0_RXAVAIL_FLAG) {
-			break;
-		}
-	}
+		do {
+			hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Select register 0
+			reg_0 = hw_inp(MODPRN02_SIO_A_CTRL + chan);
+		} while (!(reg_0 & SIO_REG0_RXAVAIL_FLAG));
 
-	ch = hw_inp(MODPRN02_SIO_A_DATA + chan);
-
-	if (flowControl_status[chan]) {
 		hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
 		hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan]);
 	}
+
+	ch = hw_inp(MODPRN02_SIO_A_DATA + chan);
 
 	return ch;
 }
