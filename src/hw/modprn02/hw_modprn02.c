@@ -106,6 +106,38 @@ uint8_t modprn_getch(MPRN_Channel chan) {
 	return hw_inp(MODPRN02_SIO_A_DATA + chan);
 }
 
+uint8_t modprn_getchBuf(MPRN_Channel chan, uint8_t *buf, uint8_t bufSize) {
+	uint8_t reg_0 = 0;
+	uint8_t buf_used = 0;
+
+	// Raise RTS
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan] | SIO_REG5_RTS_FLAG);
+
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Select register 0
+	reg_0 = hw_inp(MODPRN02_SIO_A_CTRL + chan);
+
+	// Wait for some chars to be available
+	do {
+		hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Select register 0
+		reg_0 = hw_inp(MODPRN02_SIO_A_CTRL + chan);
+	} while (!(reg_0 & SIO_REG0_RXAVAIL_FLAG));
+
+	// Lower RTS
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan]);
+
+	while ((reg_0 & SIO_REG0_RXAVAIL_FLAG) && (buf_used < bufSize)) {
+		buf[buf_used] = hw_inp(MODPRN02_SIO_A_DATA + chan);
+		buf_used++;
+
+		hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Select register 0
+		reg_0 = hw_inp(MODPRN02_SIO_A_CTRL + chan);	
+	}
+
+	return buf_used;
+}
+
 uint8_t modprn_getBreakStatus(MPRN_Channel chan) {
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Select register 0
 	return (hw_inp(MODPRN02_SIO_A_CTRL + chan) & SIO_REG0_BREAK_FLAG);

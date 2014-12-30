@@ -12,8 +12,8 @@
 void sys_init(void) {
 	cpm_sysfunc_init();
 
-	setup_modprn(Channel_A, BRate_38400, bpc_8, stop_1, parity_none);
-	setup_modprn(Channel_B, BRate_38400, bpc_8, stop_1, parity_none);
+	setup_modprn(Channel_A, BRate_9600, bpc_8, stop_1, parity_none);
+	setup_modprn(Channel_B, BRate_9600, bpc_8, stop_1, parity_none);
 }
 
 int main() {

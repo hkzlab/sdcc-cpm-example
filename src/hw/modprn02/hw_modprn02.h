@@ -59,6 +59,7 @@ void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Sto
 
 void modprn_outch(MPRN_Channel chan, uint8_t ch);
 uint8_t modprn_getch(MPRN_Channel chan);
+uint8_t modprn_getchBuf(MPRN_Channel chan, uint8_t *buf, uint8_t bufSize);
 
 uint8_t modprn_getBreakStatus(MPRN_Channel chan);
 void modprn_sendBreak(MPRN_Channel chan);
