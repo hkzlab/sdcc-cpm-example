@@ -47,16 +47,20 @@ void ctc_init(MPRN_Channel chan, MPRN_BaudRate brate) {
 void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity) {
 	// Register 0
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, SIO_BASIC_CMD_RST_CHN); // Reset the channel
+	
+	// Delay a bit, to make sure the channel got reset
 	__asm
+		nop
+		nop
 		nop
 	__endasm;
 
 	// Register 4
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x04); // Select register 4
-	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x40 |sbit | parity); // Set external sync, parity, stop bits and x16 clock mode
+	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x40 |sbit | parity); // Set parity, stop bits and x16 clock mode
 	
 	// Register 5
-	reg5_status[chan] = 0x08 | (bpc >> 1); // Enable Tx, set Tx bits
+	reg5_status[chan] = 0x08 | (bpc >> 1); // Enable Tx, set Tx bits, RTS off
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan]);
 	
@@ -82,7 +86,6 @@ void modprn_outch(MPRN_Channel chan, uint8_t ch) {
 
 uint8_t modprn_getch(MPRN_Channel chan) {
 	uint8_t reg_0 = 0;
-	uint8_t ch;
 
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Select register 0
 	reg_0 = hw_inp(MODPRN02_SIO_A_CTRL + chan);
@@ -100,9 +103,7 @@ uint8_t modprn_getch(MPRN_Channel chan) {
 		hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan]);
 	}
 
-	ch = hw_inp(MODPRN02_SIO_A_DATA + chan);
-
-	return ch;
+	return hw_inp(MODPRN02_SIO_A_DATA + chan);
 }
 
 uint8_t modprn_getBreakStatus(MPRN_Channel chan) {
@@ -111,17 +112,12 @@ uint8_t modprn_getBreakStatus(MPRN_Channel chan) {
 }
 
 void modprn_sendBreak(MPRN_Channel chan) {
-	uint8_t idx;
-
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan] | SIO_REG5_BREAK_FLAG); // Send the break signal
 
-	idx = 0xFF;
-	while(idx--) {
-		__asm
-			nop
-		__endasm;
-	}
+	__asm
+		nop
+	__endasm;
 	
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan]); // Disable break signal
