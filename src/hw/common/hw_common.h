@@ -8,4 +8,7 @@ uint8_t hw_inp(uint8_t port) __naked;
 
 void hw_smallDelay(uint8_t delay);
 
+void hw_setupInterrupts(void);
+void hw_addInterruptHandler(uint8_t handNo, uint16_t addr);
+
 #endif /* _HWLIB_COMMON_HEADER_ */

@@ -7,10 +7,13 @@
 #include "syslib/cpm_sysfunc.h"
 #include "syslib/ansi_term.h"
 
+#include "hw/common/hw_common.h"
 #include "hw/modprn02/hw_modprn02.h"
 
 void sys_init(void) {
 	cpm_sysfunc_init();
+
+	hw_setupInterrupts();
 
 	setup_modprn(Channel_A, BRate_19200, bpc_8, stop_1, parity_none);
 	setup_modprn(Channel_B, BRate_19200, bpc_8, stop_1, parity_none);
@@ -19,7 +22,7 @@ void sys_init(void) {
 #define CHAR_BUF_SIZE 64
 
 int main() {
-	uint16_t idx = 0x1FFF;
+	uint16_t idx = 0x0FFF;
 	uint8_t buf[CHAR_BUF_SIZE], read_size, b_idx;
 //	uint8_t ch;
 	
@@ -39,6 +42,10 @@ int main() {
 			modprn_outch(Channel_A, buf[b_idx]);
 		}
 	}
+
+	__asm
+		di
+	__endasm;
 
 	return (EXIT_SUCCESS);
 }

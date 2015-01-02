@@ -1,5 +1,7 @@
 #include "hw_common.h"
 
+#define VECTOR_ADDRESS_START 0x7F
+
 void hw_outp(uint8_t port, uint8_t data) __naked {
 	port; data;
 
@@ -47,3 +49,37 @@ void hw_smallDelay(uint8_t delay) {
 		__endasm;
 	}
 }
+
+void hw_setupInterrupts(void) {
+	uint16_t *vec_table = (uint16_t*)((uint16_t)(((uint16_t)VECTOR_ADDRESS_START) << 8));
+	uint8_t idx = 0;
+
+	__asm
+		di	// Disable interrupts
+
+		push af
+
+		ld a,#VECTOR_ADDRESS_START // Load the address
+		ld I,a
+
+		pop af
+	__endasm;
+
+	for(idx = 0; idx < 128; idx++) vec_table[idx] = 0xED4D;
+
+	__asm
+		im 2 // Enable interrupt mode 2
+		ei	// Enable interrupts
+	__endasm;
+
+}
+
+void hw_addInterruptHandler(uint8_t handNo, uint16_t addr) {
+	uint8_t *vec_table = (uint8_t*)((uint16_t)(((uint16_t)VECTOR_ADDRESS_START) << 8));
+
+	vec_table[(handNo * 2) + 0] = (uint8_t)(addr & 0x00FF);
+	vec_table[(handNo * 2) + 1] = (uint8_t)((addr >> 8) & 0x00FF);
+
+	return;
+}
+
