@@ -10,5 +10,6 @@ void hw_smallDelay(uint8_t delay);
 
 void hw_setupInterrupts(void);
 void hw_addInterruptHandler(uint8_t handNo, uint16_t addr);
+void hw_enableInterrupts(void);
 
 #endif /* _HWLIB_COMMON_HEADER_ */

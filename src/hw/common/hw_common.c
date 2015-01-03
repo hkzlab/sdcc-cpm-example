@@ -2,6 +2,8 @@
 
 #define VECTOR_ADDRESS_START 0x7F
 
+void empty_ISR(void);
+
 void hw_outp(uint8_t port, uint8_t data) __naked {
 	port; data;
 
@@ -65,21 +67,26 @@ void hw_setupInterrupts(void) {
 		pop af
 	__endasm;
 
-	for(idx = 0; idx < 128; idx++) vec_table[idx] = 0xED4D;
+	// Fill the table with "empty" handlers...
+	for(idx = 0; idx < 128; idx++) vec_table[idx] = (uint16_t)empty_ISR;
+}
 
+void hw_enableInterrupts(void) {
 	__asm
 		im 2 // Enable interrupt mode 2
 		ei	// Enable interrupts
 	__endasm;
-
 }
 
 void hw_addInterruptHandler(uint8_t handNo, uint16_t addr) {
-	uint8_t *vec_table = (uint8_t*)((uint16_t)(((uint16_t)VECTOR_ADDRESS_START) << 8));
+	uint16_t *vec_table = (uint16_t*)(((uint16_t)(((uint16_t)VECTOR_ADDRESS_START) << 8)) & 0xFF00);
 
-	vec_table[(handNo * 2) + 0] = (uint8_t)(addr & 0x00FF);
-	vec_table[(handNo * 2) + 1] = (uint8_t)((addr >> 8) & 0x00FF);
+	vec_table[handNo >> 1] = addr;
+}
 
-	return;
+void empty_ISR(void) __naked {
+	__asm
+		halt
+	__endasm;
 }
 
