@@ -40,13 +40,13 @@ void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parit
 // Channel A
 void chA_intHandler_rx_specialCond(void) __naked;
 void chA_intHandler_rx_charAvail(void) __interrupt;
-void chA_intHandler_tx_bufEmpty(void) __interrupt;
+//void chA_intHandler_tx_bufEmpty(void) __interrupt;
 void chA_intHandler_statChng(void) __naked;
 
 // Channel A
 void chB_intHandler_rx_specialCond(void) __naked;
-void chB_intHandler_rx_charAvail(void) __naked;
-void chB_intHandler_tx_bufEmpty(void) __naked;
+void chB_intHandler_rx_charAvail(void) __interrupt;
+//void chB_intHandler_tx_bufEmpty(void) __naked;
 void chB_intHandler_statChng(void) __naked;
 
 /*********************************/
@@ -202,6 +202,20 @@ void modprn_sendBreak(MPRN_Channel chan) {
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan]); // Disable break signal
 }
 
+uint8_t modprn_int_getch(MPRN_Channel chan) {
+	uint8_t chbuf;
+
+	while(!ch_buf[1][chan]);
+
+	chbuf = ch_buf[0][chan];
+	ch_buf[1][0] = 0;
+
+	hw_outp(MODPRN02_SIO_A_CTRL, 0x05); // Select register 5
+	hw_outp(MODPRN02_SIO_A_CTRL, reg5_status[0] | SIO_REG5_RTS_FLAG); // Raise RTS
+
+	return chbuf;
+}
+
 // Interrupt Handlers...
 // Channel A
 void chA_intHandler_rx_specialCond(void) __naked {
@@ -231,29 +245,24 @@ void chA_intHandler_rx_charAvail(void) __interrupt {
 	__endasm;
 }
 
-uint8_t modprn_int_getch(MPRN_Channel chan) {
-	uint8_t chbuf;
-
-	while(!ch_buf[1][chan]);
-
-	chbuf = ch_buf[0][chan];
-	ch_buf[1][0] = 0;
-
-	hw_outp(MODPRN02_SIO_A_CTRL, 0x05); // Select register 5
-	hw_outp(MODPRN02_SIO_A_CTRL, reg5_status[0] | SIO_REG5_RTS_FLAG); // Raise RTS
-
-	return chbuf;
-}
-
+/*
 void chA_intHandler_tx_bufEmpty(void) __interrupt {
 	__asm
 		ei
 	__endasm;
 }
+*/
 
 void chA_intHandler_statChng(void) __naked {
 	__asm
+		push af
+
+		ld a,#SIO_BASIC_CMD_RST_ERR
+		out (#MODPRN02_SIO_A_CTRL),a
+
 		ei
+
+		pop af
 
 		reti
 	__endasm;
@@ -264,27 +273,30 @@ void chB_intHandler_rx_specialCond(void) __naked {
 	__asm
 		push af
 
-	//	ld a,#SIO_BASIC_CMD_RST_ERR
-	//	out (#MODPRN02_SIO_B_CTRL),a
+		ld a,#SIO_BASIC_CMD_RST_ERR
+		out (#MODPRN02_SIO_B_CTRL),a
 
 		ei
 
 		pop af
+
 		reti
 	__endasm;
 }
 
-void chB_intHandler_rx_charAvail(void) __naked {
+void chB_intHandler_rx_charAvail(void) __interrupt {
+	hw_outp(MODPRN02_SIO_B_CTRL, 0x05); // Select register 5
+	hw_outp(MODPRN02_SIO_B_CTRL, reg5_status[0]); // Lower RTS
+
+	ch_buf[0][1] = hw_inp(MODPRN02_SIO_B_DATA);
+	ch_buf[1][1] = 1;
+
 	__asm
-		push af
-
 		ei
-
-		pop af
-		reti
 	__endasm;
 }
 
+/*
 void chB_intHandler_tx_bufEmpty(void) __naked {
 	__asm
 		push af
@@ -295,14 +307,19 @@ void chB_intHandler_tx_bufEmpty(void) __naked {
 		reti
 	__endasm;
 }
+*/
 
 void chB_intHandler_statChng(void) __naked {
 	__asm
 		push af
 
+		ld a,#SIO_BASIC_CMD_RST_ERR
+		out (#MODPRN02_SIO_B_CTRL),a
+
 		ei
 
 		pop af
+
 		reti
 	__endasm;
 }

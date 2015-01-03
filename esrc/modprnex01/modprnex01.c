@@ -13,6 +13,8 @@
 void sys_init(void) {
 	cpm_sysfunc_init();
 
+	cprintf("Init...\r\n");
+	
 	hw_setupInterrupts();
 	
 	setup_modprn(Channel_A, BRate_9600, bpc_8, stop_1, parity_none, 0x00);
@@ -27,7 +29,6 @@ int main() {
 
 	sys_init();
 
-	cprintf("Testing MODPRN Channel A\n");
 /*
 	while(idx--) {
 		ch = modprn_getch(Channel_A);
