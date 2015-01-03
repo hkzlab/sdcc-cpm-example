@@ -30,11 +30,18 @@
 static uint8_t reg5_status[] = {0, 0};
 static uint8_t reg3_status[] = {0, 0};
 
-static volatile uint8_t ch_buf[2][2] = {{0, 0}, {0, 0}};
+#define SIO_BUF_DEPTH 16
+typedef struct {
+	volatile uint8_t avail;
+	volatile uint8_t buf[SIO_BUF_DEPTH];
+	volatile uint8_t idx;
+} sio_buf;
+
+static sio_buf ch_buf[2];
 
 // Initialize the CTC IC 
 void ctc_init(MPRN_Channel chan, MPRN_BaudRate brate);
-void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity, uint8_t ivect_start);
+void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity);
 
 // Interrupt handlers
 // Channel A
@@ -51,9 +58,11 @@ void chB_intHandler_statChng(void) __naked;
 
 /*********************************/
 
-void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity, uint8_t ivect_start) {
+void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity) {
 	ctc_init(chan, brate);
-	sio_init(chan, bpc, sbit, parity, ivect_start);
+	sio_init(chan, bpc, sbit, parity);
+
+	ch_buf[chan].avail = 0;
 }
 
 void ctc_init(MPRN_Channel chan, MPRN_BaudRate brate) {
@@ -63,7 +72,7 @@ void ctc_init(MPRN_Channel chan, MPRN_BaudRate brate) {
 	hw_outp(MODPRN02_CTC_CHAN_0 + chan, (uint8_t)brate); // Send the time constant. This will divide our input clock.
 }
 
-void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity, uint8_t ivect_start) {
+void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity) {
 	// Register 0
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, SIO_BASIC_CMD_RST_CHN); // Reset the channel
 	
@@ -83,41 +92,43 @@ void sio_init(MPRN_Channel chan, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parit
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan]);
 
-#if 1
-//	ivect_start &= SIO_VECT_LOC_MASK;
-
-	// Channel B handlers
-	//hw_addInterruptHandler(ivect_start | 0x00, (uint16_t)chB_intHandler_tx_bufEmpty);
-	//hw_addInterruptHandler(ivect_start | 0x02, (uint16_t)chB_intHandler_statChng);
-	hw_addInterruptHandler(ivect_start | 0x04, (uint16_t)chB_intHandler_rx_charAvail);
-	//hw_addInterruptHandler(ivect_start | 0x06, (uint16_t)chB_intHandler_rx_specialCond);
-
-	// Channel A handlers
-	//hw_addInterruptHandler(ivect_start | 0x08, (uint16_t)chA_intHandler_tx_bufEmpty);
-	//hw_addInterruptHandler(ivect_start | 0x0A, (uint16_t)chA_intHandler_statChng);
-	hw_addInterruptHandler(ivect_start | 0x0C, (uint16_t)chA_intHandler_rx_charAvail);
-	//hw_addInterruptHandler(ivect_start | 0x0E, (uint16_t)chA_intHandler_rx_specialCond);
-
-	hw_outp(MODPRN02_SIO_B_CTRL, 0x02); // Select register 2
-	hw_outp(MODPRN02_SIO_B_CTRL, ivect_start); // Interrupt vector 0
-#endif
-
 	// Register 1
-#if 0
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x01); // Select register 1
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x00); // Disable interrupts
-#else
-	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x01); // Select register 1
-	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x1C); // Enable interrupts for received chars, TX and status affect vector
-#endif
 
 	// Register 3
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x03); // Select register 3
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, (0x01|bpc)); // Set rx bits and enable RX
 
-	// Register 5 again...
+	// Register 5 again, set RTS
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
 	hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan] | SIO_REG5_RTS_FLAG);
+}
+
+void modprn_setupInterrupts(uint8_t ivect_start) {
+	ivect_start &= SIO_VECT_LOC_MASK;
+
+	// Channel B handlers
+	//hw_addInterruptHandler(ivect_start | 0x00, (uint16_t)chB_intHandler_tx_bufEmpty);
+	hw_addInterruptHandler(ivect_start | 0x02, (uint16_t)chB_intHandler_statChng);
+	hw_addInterruptHandler(ivect_start | 0x04, (uint16_t)chB_intHandler_rx_charAvail);
+	hw_addInterruptHandler(ivect_start | 0x06, (uint16_t)chB_intHandler_rx_specialCond);
+
+	// Channel A handlers
+	//hw_addInterruptHandler(ivect_start | 0x08, (uint16_t)chA_intHandler_tx_bufEmpty);
+	hw_addInterruptHandler(ivect_start | 0x0A, (uint16_t)chA_intHandler_statChng);
+	hw_addInterruptHandler(ivect_start | 0x0C, (uint16_t)chA_intHandler_rx_charAvail);
+	hw_addInterruptHandler(ivect_start | 0x0E, (uint16_t)chA_intHandler_rx_specialCond);
+
+	hw_outp(MODPRN02_SIO_B_CTRL, 0x02); // Select register 2
+	hw_outp(MODPRN02_SIO_B_CTRL, ivect_start); // Interrupt vector 0
+
+	// Register 1 for Chan A and B
+	hw_outp(MODPRN02_SIO_A_CTRL, 0x01); // Select register 1
+	hw_outp(MODPRN02_SIO_A_CTRL, 0x1C); // Enable interrupts for received chars, TX and status affect vector
+	
+	hw_outp(MODPRN02_SIO_B_CTRL, 0x01); // Select register 1
+	hw_outp(MODPRN02_SIO_B_CTRL, 0x1C); // Enable interrupts for received chars, TX and status affect vector
 }
 
 void modprn_outch(MPRN_Channel chan, uint8_t ch) {
@@ -205,13 +216,16 @@ void modprn_sendBreak(MPRN_Channel chan) {
 uint8_t modprn_int_getch(MPRN_Channel chan) {
 	uint8_t chbuf;
 
-	while(!ch_buf[1][chan]);
+	while(!ch_buf[chan].avail);
 
-	chbuf = ch_buf[0][chan];
-	ch_buf[1][0] = 0;
+	ch_buf[chan].avail--;
+	chbuf = ch_buf[chan].buf[ch_buf[chan].idx];
+	ch_buf[chan].idx++;
 
-	hw_outp(MODPRN02_SIO_A_CTRL, 0x05); // Select register 5
-	hw_outp(MODPRN02_SIO_A_CTRL, reg5_status[0] | SIO_REG5_RTS_FLAG); // Raise RTS
+	if (!ch_buf[chan].avail) {
+		hw_outp(MODPRN02_SIO_A_CTRL + chan, 0x05); // Select register 5
+		hw_outp(MODPRN02_SIO_A_CTRL + chan, reg5_status[chan] | SIO_REG5_RTS_FLAG); // Raise RTS
+	}
 
 	return chbuf;
 }
@@ -234,11 +248,20 @@ void chA_intHandler_rx_specialCond(void) __naked {
 }
 
 void chA_intHandler_rx_charAvail(void) __interrupt {
-	hw_outp(MODPRN02_SIO_A_CTRL, 0x05); // Select register 5
-	hw_outp(MODPRN02_SIO_A_CTRL, reg5_status[0]); // Lower RTS
+	uint8_t reg_0;
 
-	ch_buf[0][0] = hw_inp(MODPRN02_SIO_A_DATA);
-	ch_buf[1][0] = 1;
+	hw_outp(MODPRN02_SIO_A_CTRL, 0x05); // Select register 5
+	hw_outp(MODPRN02_SIO_A_CTRL, reg5_status[Channel_A]); // Lower RTS
+
+	ch_buf[Channel_A].idx = 0;
+
+	hw_outp(MODPRN02_SIO_A_CTRL, 0x00); // Select register 0
+	do {
+		ch_buf[Channel_A].buf[ch_buf[Channel_A].avail] = hw_inp(MODPRN02_SIO_A_DATA);
+		ch_buf[Channel_A].avail++;
+
+		reg_0 = hw_inp(MODPRN02_SIO_A_CTRL);
+	} while (reg_0 & SIO_REG0_RXAVAIL_FLAG);
 
 	__asm
 		ei
@@ -285,11 +308,20 @@ void chB_intHandler_rx_specialCond(void) __naked {
 }
 
 void chB_intHandler_rx_charAvail(void) __interrupt {
-	hw_outp(MODPRN02_SIO_B_CTRL, 0x05); // Select register 5
-	hw_outp(MODPRN02_SIO_B_CTRL, reg5_status[0]); // Lower RTS
+	uint8_t reg_0;
 
-	ch_buf[0][1] = hw_inp(MODPRN02_SIO_B_DATA);
-	ch_buf[1][1] = 1;
+	hw_outp(MODPRN02_SIO_B_CTRL, 0x05); // Select register 5
+	hw_outp(MODPRN02_SIO_B_CTRL, reg5_status[Channel_B]); // Lower RTS
+
+	ch_buf[Channel_B].idx = 0;
+
+	hw_outp(MODPRN02_SIO_B_CTRL, 0x00); // Select register 0
+	do {
+		ch_buf[Channel_B].buf[ch_buf[Channel_B].avail] = hw_inp(MODPRN02_SIO_B_DATA);
+		ch_buf[Channel_B].avail++;
+
+		reg_0 = hw_inp(MODPRN02_SIO_B_CTRL);
+	} while (reg_0 & SIO_REG0_RXAVAIL_FLAG);
 
 	__asm
 		ei
@@ -297,14 +329,9 @@ void chB_intHandler_rx_charAvail(void) __interrupt {
 }
 
 /*
-void chB_intHandler_tx_bufEmpty(void) __naked {
+void chB_intHandler_tx_bufEmpty(void) __interrupt {
 	__asm
-		push af
-
 		ei
-
-		pop af
-		reti
 	__endasm;
 }
 */

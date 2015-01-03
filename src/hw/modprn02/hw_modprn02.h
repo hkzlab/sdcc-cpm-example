@@ -55,7 +55,8 @@ typedef enum {
 } MPRN_Parity;
 
 
-void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity, uint8_t ivect_start);
+void setup_modprn(MPRN_Channel chan, MPRN_BaudRate brate, MPRN_BPC bpc, MPRN_Stop sbit, MPRN_Parity parity);
+void modprn_setupInterrupts(uint8_t ivect_start);
 
 void modprn_outch(MPRN_Channel chan, uint8_t ch);
 uint8_t modprn_getch(MPRN_Channel chan);
